@@ -4,28 +4,26 @@
 template <typename T>
 Vector<T>::Vector()
 {
-	this->max_size = 1000000;
-	this->size = 1;
-	this->capacity = this->size;
+	this->sz = 0;
+	this->cap = 0;
 	this->tab = new T[1];
 }
 
 template <typename T>
-Vector<T>::Vector(int _size)
+Vector<T>::Vector(size_t _size)
 {
-	this->max_size = 1000000;
-	this->size = _size;
-	this->capacity = this->size;
-	this->tab = new T[this->size];
+	this->cap = _size;
+	this->sz = _size;
+	this->tab = new T[this->sz];
+	bzero(this->tab, _size);
 }
 
 template <typename T>
-Vector<T>::Vector(int _size, T const init)
+Vector<T>::Vector(size_t _size, T const init)
 {
-	this->max_size = 1000000;
-	this->size = _size;
-	this->capacity = this->size;
-	this->tab = new T[this->size];
+	this->sz = _size;
+	this->cap = this->sz;
+	this->tab = new T[this->sz];
 	for (int i = 0; i < _size; i++)
 		this->tab[i] = init;
 }
@@ -33,11 +31,10 @@ Vector<T>::Vector(int _size, T const init)
 template <typename T>
 Vector<T>::Vector(const Vector &src)
 {
-	this->max_size = 1000000;
-	this->size = src.size;
-	this->capacity = this->size;
-	this->tab = new T[this->size];
-	for (int i = 0; i < this->size; i++)
+	this->sz = src.sz;
+	this->cap = this->sz;
+	this->tab = new T[this->sz];
+	for (int i = 0; i < this->sz; i++)
 		this->tab[i] = src.tab[i];
 }
 
@@ -56,11 +53,21 @@ Vector<T>::~Vector()
 template <typename T>
 Vector<T> &Vector<T>::operator=(Vector<T> const &rhs)
 {
-	this->size = rhs.size;
+	this->cap = rhs.cap;
+	this->sz = rhs.sz;
 	this->tab = new T[this->size];
 	for (int i = 0; i < this->size; i++)
 		this->tab[i] = rhs.tab[i];
 	return *this;
+}
+
+template <typename T>
+T const Vector<T>::operator[](int const index) const
+{
+	if (index < this->sz)
+		return tab[index];
+	else
+		return 0;
 }
 
 /*
@@ -70,26 +77,78 @@ Vector<T> &Vector<T>::operator=(Vector<T> const &rhs)
 template <typename T>
 void Vector<T>::push_back(T const elm)
 {
-	if (this->size < this->max_size)
+	if (this->sz < this->max_size())
 	{
-		if (this->capacity == size)
+		if (this->cap == this->sz)
 			this->tab_duplicate();
-		this->tab[this->capacity++] = elm;
+		this->tab[this->sz++] = elm;
 	}
+}
+
+template <typename T>
+void Vector<T>::pop_back(void)
+{
+	this->sz--;
 }
 
 template <typename T>
 void Vector<T>::tab_duplicate()
 {
 	T *newTab;
-	this->size *= 2;
-	newTab = new T[this->size];
-	for (int i(0); i < this->size / 2; i++)
+	this->cap ? this->cap *= 2 : this->cap = 1;
+	newTab = new T[this->sz];
+	for (int i(0); i < this->sz / 2; i++)
 		newTab[i] = this->tab[i];
 	delete[] this->tab;
 	this->tab = newTab;
 }
 
+template <typename T>
+size_t Vector<T>::max_size() const
+{
+	std::allocator<T> m;
+	return m.max_size();
+}
+
+template <typename T>
+size_t Vector<T>::capacity() const
+{
+	return this->cap;
+}
+
+template <typename T>
+size_t Vector<T>::size() const
+{
+	return this->sz;
+}
+
+template <typename T>
+bool Vector<T>::empty() const
+{
+	return (this->size == 0);
+}
+
+template <typename T>
+void Vector<T>::resize(int n, T const val)
+{
+	if (n > this->sz)
+	{
+		for(int i = n - this->sz; i > 0; i--)
+			this->push_back(val);
+	} 
+}
+
+template <typename T>
+T const Vector<T>::back(void) const
+{
+	return(tab[0]);
+}
+
+template <typename T>
+T const Vector<T>::front(void) const
+{
+	return(tab[this->sz - 1]);
+}
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
