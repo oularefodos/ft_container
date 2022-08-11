@@ -6,7 +6,6 @@ Vector<T>::Vector()
 {
 	this->sz = 0;
 	this->cap = 0;
-	this->tab = new T[1];
 }
 
 template <typename T>
@@ -62,12 +61,9 @@ Vector<T> &Vector<T>::operator=(Vector<T> const &rhs)
 }
 
 template <typename T>
-T const Vector<T>::operator[](int const index) const
+T &Vector<T>::operator[](int const index)
 {
-	if (index < this->sz)
-		return tab[index];
-	else
-		return 0;
+	return this->tab[index];
 }
 
 /*
@@ -133,22 +129,56 @@ void Vector<T>::resize(int n, T const val)
 {
 	if (n > this->sz)
 	{
-		for(int i = n - this->sz; i > 0; i--)
+		for (int i = n - this->sz; i > 0; i--)
 			this->push_back(val);
-	} 
-}
-
-template <typename T>
-T const Vector<T>::back(void) const
-{
-	return(tab[0]);
+	}
 }
 
 template <typename T>
 T const Vector<T>::front(void) const
 {
-	return(tab[this->sz - 1]);
+	return (tab[0]);
 }
+
+template <typename T>
+T const Vector<T>::back(void) const
+{
+	return (tab[this->sz - 1]);
+}
+
+template <typename T>
+void Vector<T>::shrink_to_fit(void)
+{
+	this->cap -= (this->cap - this->sz);
+}
+
+template <typename T>
+T &Vector<T>::at(size_t index)
+{
+	return (this->tab[index]);
+}
+
+template <typename T>
+T *Vector<T>::data(void) const
+{
+	return this->tab;
+}
+
+template <typename T>
+void Vector<T>::reserve(size_t len)
+{
+	T *newTab;
+	if (this->cap < len)
+	{
+		this->cap = len;
+		newTab = new T[len];
+		for (int i(0); i < this->sz; i++)
+			newTab[i] = this->tab[i];
+		delete[] this->tab;
+		this->tab = newTab;
+	}
+}
+
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
