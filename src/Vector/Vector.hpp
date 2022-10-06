@@ -1,6 +1,8 @@
 #ifndef vector_HPP
 #define vector_HPP
 
+#pragma once
+
 #include <iostream>
 #include <string>
 
@@ -200,5 +202,6 @@ namespace ft
 			T *end() const;
 			void clear() const;
 	};
+
 };
 #endif /* ********************************************************** vector_H */
