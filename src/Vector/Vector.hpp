@@ -24,13 +24,12 @@ namespace ft
 				delete[] this->tab;
 				this->tab = newTab;
 			}
-
-		public:
+		protected:
 			typedef T & reference;
 			typedef T const & const_reference;
 			typedef T * pointer;
 			typedef T const * const_pointer;
-
+		public:
 			vector()
 			{
 				this->sz = 0;

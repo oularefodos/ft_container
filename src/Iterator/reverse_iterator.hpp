@@ -2,11 +2,11 @@
 #define REVERSE_ITERATOR_HPP
 #include "Iterator_node.hpp"
 #include "Iterator_traits.hpp"
+#include <vector>
 
 #include <iterator>
 namespace ft
 {
-
     template <class Iterator>
     class reverse_iterator :
         public Iterator <typename ft::iterator_traits<Iterator>::iterator_category,
@@ -108,6 +108,7 @@ namespace ft
             return (*this);
         }
     };
+
 	template <class Iterator>  
     typename reverse_iterator<Iterator>::difference_type operator- (const reverse_iterator<Iterator>& lhs,
         const reverse_iterator<Iterator>& rhs)
