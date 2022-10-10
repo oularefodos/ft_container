@@ -14,7 +14,9 @@ class Vector_iterator : public Iterator<ft::random_access_iterator_tag, T>
 		typedef T const * const_pointer;
 
     public:
-        Vector_iterator() {};
+        // constructor 
+
+        Vector_iterator() : ptr(0) {};
         Vector_iterator(T * x)
         {
             ptr = x;
@@ -25,6 +27,8 @@ class Vector_iterator : public Iterator<ft::random_access_iterator_tag, T>
             ptr = rhs.ptr;
         };
 
+        // affectation
+        
         Vector_iterator& operator=(T * rhs)
         {
             ptr = rhs;
@@ -37,31 +41,21 @@ class Vector_iterator : public Iterator<ft::random_access_iterator_tag, T>
             return *this;
         };
 
-        Vector_iterator& operator+=(const int& rhs)
-        {
-            ptr = ptr + rhs;
-            return *this;
-        };
-
-        Vector_iterator& operator-=(const int& rhs)
-        {
-            ptr = ptr - rhs;
-            return *this;
-        };
-
-        reference operator*() {
+        //Pointer like operators
+        reference operator*() const {
             return *ptr;
         };
 
-        pointer operator->()
+        pointer operator->() const
         {
             return ptr;
         };
 
-        reference operator[](const int& rhs) {
+        reference operator[](const int& rhs) const {
             return ptr[rhs];
         };
 
+        // increment and decrement
         Vector_iterator& operator++()
         {
             return ++ptr, *this;
@@ -86,9 +80,64 @@ class Vector_iterator : public Iterator<ft::random_access_iterator_tag, T>
             return *this;
         };
 
+        // Arthimetic
+
+        Vector_iterator& operator+=(defference_type rhs)
+        {
+            ptr += rhs;
+            return *this;
+        };
+
+        Vector_iterator& operator+(difference_type rhs)
+        {
+            return Vector_iterator(ptr + rhs);
+        };
+
+        Vector_iterator& operator+(difference_type rhs, const Vector_iterator& lhs)
+        {
+            return Vector_iterator(rhs + lhs.ptr);
+        }
+
+        Vector_iterator& operator-=(const int& rhs)
+        {
+            ptr = ptr - rhs;
+            return *this;
+        };
+
+        Vector_iterator& operator-(difference_type rhs) const
+        {
+            return Vector_iterator(ptr - rhs);
+        };
+
         difference_type operator-(const Vector_iterator& rhs)
         {
             return ptr - rhs.ptr;
+        };
+
+        // Comparaison
+
+        bool operator==(const Vector_iterator rhs) const {
+            return ptr == lhs.ptr;
+        };
+
+        bool operator!=(const Vector_iterator rhs) const {
+            return ptr != lhs.ptr;
+        };
+
+        bool operator>=(const Vector_iterator rhs) const {
+            return ptr >= lhs.ptr;
+        };
+
+        bool operator<=(const Vector_iterator rhs) const {
+            return ptr <= lhs.ptr;
+        };
+
+        bool operator<(const Vector_iterator rhs) const {
+            return ptr < lhs.ptr;
+        };
+
+        bool operator>(const Vector_iterator rhs) const {
+            return ptr > lhs.ptr;
         };
 };
 
