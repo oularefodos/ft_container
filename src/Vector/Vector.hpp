@@ -1,71 +1,96 @@
 #ifndef vector_HPP
 #define vector_HPP
 
-#pragma once
 
 #include <iostream>
 #include <string>
 #include <vector>
+#include "../Iterator/Iterator_traits.hpp"
+#include "../Iterator/Vector_iterator.hpp"
 
 namespace ft
 {
-	template <typename T>
+	template <typename T, class Alloc = std::allocator<T> >
 	class vector
 	{
 		private:
 			T *tab;
-			unsigned int sz;
+			Alloc alloc;
+			size_t sz;
 			unsigned int cap;
+			void destroy_tab()
+			{
+				for (unsigned int i(0); i < sz; i++)
+					alloc.destroy(&tab[i]);
+				alloc.destroy(tab);
+				alloc.deallocate(tab, sz);
+			}
 			void tab_duplicate(size_t _size)
 			{
 				T *newTab;
-				newTab = new T[_size];
-				for (int i(0); i < this->sz; i++)
-					newTab[i] = this->tab[i];
-				delete[] this->tab;
+				newTab = alloc.allocate(_size);
+				for (unsigned int i(0); i < this->sz; i++)
+					alloc.construct(&newTab[i], tab[i]);
+				destroy_tab();
 				this->tab = newTab;
 			}
 		protected:
-			typedef T & reference;
-			typedef T const & const_reference;
-			typedef T * pointer;
-			typedef T const * const_pointer;
+			typedef T value_type;
+			typedef typename std::allocator<value_type> allocator_type;
+			typedef typename allocator_type::reference reference;
+			typedef Vector_iterator<value_type> iterator;
+			typedef typename allocator_type::const_reference const_reference;
+			typedef typename allocator_type::pointer pointer;
+			typedef typename allocator_type::const_pointer const_pointer;
+			typedef typename ft::iterator_traits<iterator>::difference_type difference_type;
+			typedef size_t size_type;
 		public:
-			vector()
+			vector(const allocator_type& _alloc = allocator_type())
 			{
+				alloc = _alloc;
 				this->sz = 0;
 				this->cap = 0;
 			}
 
 			vector(vector const &src)
 			{
+				alloc = src.alloc;
 				this->sz = src.sz;
 				this->cap = this->sz;
-				this->tab = new T[this->sz];
-				for (int i = 0; i < this->sz; i++)
-					this->tab[i] = src.tab[i];
+				this->tab = alloc.allocate(sz);
+				for (unsigned int i = 0; i < this->sz; i++)
+					alloc.construct(&tab[i], src.tab[i]);
 			}
+
+			vector(size_type _size, const value_type& val = value_type(),
+				 const allocator_type& _alloc = allocator_type())
+			{
+				alloc = _alloc;
+				this->cap = _size;
+				this->sz = _size;
+				this->tab = alloc.allocate(sz);
+				for (unsigned int i = 0; i < this->sz; i++)
+					alloc.construct(&tab[i], val);
+			}
+
+			template <class inputIterator>
+			vector(inputIterator const & start, inputIterator const & end, \
+				const allocator_type& _alloc = allocator_type())
+			{
+				unsigned int i;
+				alloc = _alloc;
+				this->sz = end - start;
+				this->cap = this->sz;
+				this->tab = alloc.allocate(this->sz);
+				i = 0;
+				while((start != end) && (i < sz))
+					alloc.construct(&tab[i++], *start);
+			}
+
 
 			~vector()
 			{
-				delete[] tab;
-			}
-
-			vector(int _size)
-			{
-				this->cap = _size;
-				this->sz = _size;
-				this->tab = new T[this->sz];
-				bzero(this->tab, _size);
-			}
-
-			vector(int _size, T const init)
-			{
-				this->sz = _size;
-				this->cap = this->sz;
-				this->tab = new T[this->sz];
-				for (int i = 0; i < _size; i++)
-					this->tab[i] = init;
+				destroy_tab();
 			}
 
 			vector &operator=(vector const &rhs)
@@ -103,8 +128,7 @@ namespace ft
 
 			size_t max_size()
 			{
-				std::allocator<T> m;
-				return m.max_size();
+				return alloc.max_size();
 			}
 
 			size_t capacity()
@@ -183,7 +207,7 @@ namespace ft
 				return this->tab;
 			}
 
-			pinter data(void)
+			pointer data(void)
 			{
 				return this->tab;
 			}
@@ -197,10 +221,6 @@ namespace ft
 					this->tab_duplicate(len);
 				}
 			}
-			
-			T *begin() const;
-			T *end() const;
-			void clear() const;
 	};
 
 };
