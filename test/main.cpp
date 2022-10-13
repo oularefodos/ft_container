@@ -5,19 +5,37 @@
 
 int main()
 {
-    std::vector<std::string> init1(5, "fode");
-    ft::vector<std::string> init2(5, "fode");
-    std::vector<std::string> tab1(init1.begin(), init1.end());
-    ft::vector<std::string> tab2(init2);
+    /** assign test */
 
-    std::cout << tab1.size() << std::endl;
-    std::cout << tab2.size() << std::endl;
-    std::cout << tab1.capacity() << std::endl;
-    std::cout << tab2.capacity() << std::endl;
+        // std::vector<int> tab1(12, 45);
+        ft::vector<int> tab(45, 45);
+        ft::vector<int> tab2(4, 12);
+        tab2.push_back(20);
+        tab2.insert(++tab2.begin(), 2, 56);
 
-    for (unsigned int i = 0; i < tab1.size(); i++)
+        // tab.assign(tab1.begin(), tab1.end());
+
+        // std::cout << tab2.size() << " size " << tab.size() << std::endl;
+        // std::cout << tab2.capacity() << " capacity " << tab.capacity() << std::endl;
+        // for (unsigned int i (0); i < tab.size(); i++)
+        //     std::cout << tab1[i] << " " << tab[i] << std::endl;
+
+
+//     std::vector<std::string> init1(5, "fode");
+//     ft::vector<std::string> init2(5, "fode");
+//     std::vector<std::string> tab1(init1.begin(), init1.end());
+//     ft::vector<std::string> tab2(init2);
+
+//     std::cout << tab1.size() << std::endl;
+//     std::cout << tab2.size() << std::endl;
+//    tab1.pop_back(); tab2.pop_back();
+
+//     std::cout << tab1.size() << std::endl;
+//     std::cout << tab2.size() << std::endl;
+
+    for (unsigned int i = 0; i < tab2.size(); i++)
     {
-        std::cout << tab2[i] << " " << tab1[i] << std::endl;
+        std::cout << tab2[i] << " " << tab[i] << std::endl;
         // std::cout << i << tab2[i] << std::endl;
     }
 
@@ -31,6 +49,4 @@ int main()
     // {
     //     std::cout << tab2[i] << " " << tab1[i] << std::endl;
     // }
-
-    system("leaks container");
 }
