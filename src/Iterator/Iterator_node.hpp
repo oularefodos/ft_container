@@ -3,7 +3,7 @@
 #include <iostream>
 template <class Category, class T, class Distance = ptrdiff_t,
         class Pointer = T *, class Reference = T &>
-    struct Iterator
+    struct iterator
     {
         typedef T           value_type;
         typedef Distance    difference_type;

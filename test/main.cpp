@@ -8,10 +8,8 @@ int main()
     /** assign test */
 
         // std::vector<int> tab1(12, 45);
-        ft::vector<int> tab(45, 45);
+        std::vector<int> tab(45, 45);
         ft::vector<int> tab2(4, 12);
-        tab2.push_back(20);
-        tab2.insert(++tab2.begin(), 2, 56);
 
         // tab.assign(tab1.begin(), tab1.end());
 

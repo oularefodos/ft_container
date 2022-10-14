@@ -4,7 +4,7 @@
 #include "Iterator_traits.hpp"
 
 template <class T>
-class Vector_iterator : public Iterator<ft::random_access_iterator_tag, T>
+class Vector_iterator : public iterator<ft::random_access_iterator_tag, T>
 {
     private:
         T *ptr;
@@ -91,7 +91,7 @@ class Vector_iterator : public Iterator<ft::random_access_iterator_tag, T>
             return *this;
         }
 
-        Vector_iterator& operator+(difference_type rhs)
+        Vector_iterator& operator+(difference_type const& rhs)
         {
             return Vector_iterator(ptr + rhs);
         }
