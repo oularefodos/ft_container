@@ -2,7 +2,7 @@ NAME= container
 
 SRCS= main.cpp
 HPP= ../src/Vector/Vector.hpp ../src/Iterator/Iterator_node.hpp ../src/Iterator/Vector_iterator.hpp  ../src/Vector/Vector.hpp \
-../src/Iterator/Iterator_traits.hpp  ../src/Iterator/reverse_iterator.hpp
+../src/Iterator/Iterator_traits.hpp  ../src/Iterator/reverse_iterator.hpp ../src/RedBlackTree/Red_black_tree.hpp
 
 CFLAGS= -Wall -Wextra -Werror -std=c++98
 

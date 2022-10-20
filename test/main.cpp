@@ -7,6 +7,9 @@
 
 
 int main() {
-    Noeud<int> m;
-    (void)m;
-}
+    RedBlackTree<int> m;
+    m.insert(10);
+    m.insert(50);
+    m.insert(5);
+    m.display(2);
+};
