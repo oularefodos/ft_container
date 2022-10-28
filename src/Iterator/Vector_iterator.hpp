@@ -80,7 +80,7 @@ class Vector_iterator : public iterator<ft::random_access_iterator_tag, T>
         {
             Vector_iterator temp(*this);
             --ptr;
-            return *this;
+            return temp;
         }
 
         // Arthimetic
