@@ -10,13 +10,18 @@
 int main() {
     RedBlackTree<int> m;
     srand(time(NULL));
-    for (int i = 0; i < 1000; i++) {
-        m.insert(rand() % 100);
+    for (int i = 0; i < 10000; i++) {
+        int x = rand() % 800;
+        m.insert(x);
+    }
+
+    for (int i = 0; i < 10000; i++) {
+        m.deleteNode(rand() % 100);
         // std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;
     }
     // std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;
     // m.display(2, m.getRoot(), 2);
-    m.printTree();
+    // m.printTree();
     // for (int i = 0; i < 10000; i++) {
     //     m.deleteNode(rand() % 100);
     //     std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;

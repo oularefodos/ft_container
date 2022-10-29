@@ -182,14 +182,26 @@ class RedBlackTree {
         Noeud<T>* delOne(Noeud<T>* node) {
             Noeud<T>* ret;
             ret = NULL;
+            if (node->parrent == NULL) {
+                alloc.destroy(node->rigth);
+                alloc.destroy(node->left);
+                alloc.deallocate(node->rigth, 1);
+                alloc.deallocate(node->left, 1);
+                alloc.destroy(node);
+                alloc.deallocate(node, 1);
+
+            }
             if (node->left->isNull && node->rigth->isNull)
             {
-                if (node == node->parrent->left)
+                if (node->parrent && node == node->parrent->left)
                     node->parrent->left = node->left;
-                else
+                else if(node->parrent && node == node->parrent->rigth)
                     node->parrent->rigth = node->left;
+                node->left->parrent = node->parrent;
                 ret = NULL;
+                alloc.destroy(node->rigth);
                 alloc.deallocate(node->rigth, 1);
+                alloc.destroy(node);
                 alloc.deallocate(node, 1);
             }
             else if (node->left->isNull || node->rigth->isNull)
@@ -201,12 +213,15 @@ class RedBlackTree {
                         node->parrent->left = node->rigth;
                         node->rigth->parrent = node->parrent;
                     }
-                    else {
+                    else if (node == node->parrent->rigth)
+                    {
                         node->parrent->rigth = node->rigth;
                         node->rigth->parrent = node->parrent;
                     }
                     ret = node->rigth;
+                    alloc.destroy(node->left);
                     alloc.deallocate(node->left, 1);
+                    alloc.destroy(node);
                     alloc.deallocate(node, 1);
                 }
                 else {
@@ -219,7 +234,9 @@ class RedBlackTree {
                         node->left->parrent = node->parrent;
                     }
                     ret = node->left;
+                    alloc.destroy(node->rigth);
                     alloc.deallocate(node->rigth, 1);
+                    alloc.destroy(node);
                     alloc.deallocate(node, 1);
                 }
             }
@@ -250,34 +267,6 @@ class RedBlackTree {
 
         Noeud<T>* getRoot() {
             return root;
-        }
-
-        int testTree(Noeud<T>* temp) {
-            int i = 0;
-            int y = 0;
-            int ret = 0;
-            int v = 0;
-            if (temp->isNull == false) {
-                if (temp->color == RED) {
-                    if (temp->left->color == RED || temp->rigth->color == RED) {
-                        std::cout << "ERREUR dans l'abre" << std::endl;
-                        exit(1);
-                    }
-                    else {
-                        v = 1;
-                    }
-                }
-                if (!temp->left->isNull)
-                    i += testTree(temp->left);
-                if (!temp->rigth->isNull)
-                    y += testTree(temp->rigth);
-                if (i == y && v == 1)
-                    std::cout << "Success" << std::endl;
-                else
-                    std::cout << "Wrong" << std::endl;
-                temp->color ? (ret = 0) : (ret = 1);
-            }
-            return (ret);
         }
 
         void rigthRotate (Noeud<T> *noeud) {
@@ -323,6 +312,7 @@ class RedBlackTree {
         }
 
         void insert(T const& value) {
+            int i = 0;
             this->sz++;
             if (!root)
             {
@@ -346,8 +336,10 @@ class RedBlackTree {
                         temp = temp->left;
                         n = 1;
                     }
-                    else if (temp->value == value)
+                    else if (temp->value == value) {
+                        i = 1;
                         break;
+                    }
                     if (temp->isNull)
                     {
                         this->init(temp_parrent, temp, RED, value);
@@ -358,7 +350,8 @@ class RedBlackTree {
                         break;
                     }
                 }
-                InsertFix(temp);
+                if (!i)
+                    InsertFix(temp);
             }
         }
 
@@ -378,33 +371,6 @@ class RedBlackTree {
             return (temp);
         }
 
-        void display(int n, Noeud<T>* noeud, int m)
-        {
-            if (noeud->isNull)
-                return ;
-            int i = 0;
-            while (i++ < n)
-                std::cout <<"  ";
-            if (m == 2)
-                std::cout << "ROOT --->";
-            if (!m)
-                std::cout << "LEFT --->";
-            if (m == 1)
-                std::cout << "RIGTH --->";
-            if (noeud->color == RED)
-                std::cout << " color : RED | " ;
-            else   
-                std::cout << " color : BLACK | " ;
-            
-            std::cout << "Value : " << noeud->value << std::endl << std::endl;
-            if (noeud->left)
-            {
-                display(n + 10, noeud->left, 0);
-            }
-            if (noeud->rigth)
-                display(n + 10, noeud->rigth, 1);
-        }
-
         void InsertFix(Noeud<T>* noeud) {
             Noeud<T>* u;
             while (noeud->parrent && noeud->parrent->color == RED) {
@@ -414,8 +380,7 @@ class RedBlackTree {
                     {
                         u->color = BLACK;
                         noeud->parrent->color = BLACK;
-                        if (noeud->parrent->parrent != root)
-                            noeud->parrent->parrent->color = RED;
+                        noeud->parrent->parrent->color = RED;
                         noeud = noeud->parrent->parrent;
                     }
                     else {
@@ -434,8 +399,7 @@ class RedBlackTree {
                     if (u->color == RED) {
                         u->color = BLACK;
                         noeud->parrent->color = BLACK;
-                        if (noeud->parrent->parrent != root)
-                            noeud->parrent->parrent->color = RED;
+                        noeud->parrent->parrent->color = RED;
                         noeud = noeud->parrent->parrent;
                     }
                     else {
@@ -452,16 +416,15 @@ class RedBlackTree {
                 if (noeud == root)
                     break ;
             }
+            root->color = BLACK;
         }
 
         void deleteNode(T const& value) {
             Noeud<T>* node = search(value);
             Noeud<T>* temp;
             int to_delete_color;
-            if (node->isNull) {
-                std::cout << "this key not found" << std::endl;
+            if (node->isNull)
                 return ;
-            }
             this->sz--;
             if (node->left->isNull || node->rigth->isNull)
             {
@@ -536,6 +499,7 @@ class RedBlackTree {
                 }
             }
             node->color = BLACK;
+            std::cout << "end\n"; 
         }
 
         bool testRedBlack() const {
