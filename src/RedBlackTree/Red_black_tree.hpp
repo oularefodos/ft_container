@@ -280,6 +280,8 @@ class RedBlackTree {
 
         Noeud<T>* search(T const& value)
         {
+            if (!root)
+                return NULL;
             Noeud<T>* temp = this->root;
             while (!temp->isNull)
             {
