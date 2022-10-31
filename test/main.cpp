@@ -15,16 +15,17 @@ int main() {
         m.insert(x);
     }
 
-    for (int i = 0; i < 10000; i++) {
-        m.deleteNode(rand() % 100);
-        // std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;
+    std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;
+
+    while(m.getRoot()) {
+        m.deleteNode(m.getRoot()->value);
+        std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;
     }
     // std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;
     // m.display(2, m.getRoot(), 2);
     // m.printTree();
     // for (int i = 0; i < 10000; i++) {
     //     m.deleteNode(rand() % 100);
-    //     std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;
     // }
     // Noeud<int> *t;
     // m.insert(10);
