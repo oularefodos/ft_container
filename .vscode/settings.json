@@ -36,7 +36,7 @@
         "cwctype": "cpp",
         "exception": "cpp",
         "functional": "cpp",
-        "initializer_list": "cpp",
+        "_initializer_list": "cpp",
         "ios": "cpp",
         "iosfwd": "cpp",
         "iostream": "cpp",

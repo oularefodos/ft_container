@@ -3,43 +3,74 @@
 #include "../src/Vector/Vector.hpp"
 #include "../src/Stack/Stack.hpp"
 #include "../src/RedBlackTree/Red_black_tree.hpp"
+#include "../src/Map/map.hpp"
 #include <vector>
+#include <map>
 #include <cstdlib>
 #include <ctime>
+// #include <functional.h>
+
+void f() {
+    system("leaks container");
+}
+
+
+
 
 int main() {
-    RedBlackTree<int> m;
+    ft::map<int, int> m;
+    
     srand(time(NULL));
-    for (int i = 0; i < 10000; i++) {
+    for (int i = 0; i < 10; i++) {
         int x = rand() % 800;
-        m.insert(x);
+        m.insert(std::pair<int, int> (i, x));
+        std::cout << std::boolalpha <<  m.test() << std::endl;
     }
-    std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;
+    m.print();
+    // compar<std::pair<int, int> > comp;
+    // std::pair<int, int> m(1, 2);
+    // std::pair<int, int> m2(4, 5);
+    // std::cout << comp(m, m2) << std::endl;
+    // atexit(f);
+    // RedBlackTree<std::pair<const int, int>, compar<std::pair<int, int> > > m;
+    // // srand(time(NULL));
+    // for (int i = 0; i < 100000; i++) {
+    //     int x = rand() % 800;
+    //     m.insert(std::pair<int, int> (i, x));
+    //     // std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;
+    //     // std::cout << i << std::endl;
+    // }
+    // // std::cout<< "mm***m" << std::endl;
+    // // m.printTree();
+    // for (int i = 0; i < 100000; i++) {
+    //     int x = rand() % 800;
+    //     // std::cout << x << std::endl;
+    //     m.deleteNode(std::pair<int, int> (i, x));
+    // std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;
+    //     std::cout << i << std::endl;
 
-    for (int i = 0; i < 10000; i++) {
-        int x = rand() % 800;
-        // std::cout << i << std::endl;
-        m.deleteNode(x);
-    std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;
-    }
+    // }
 
-    for (int i = 0; i < 10000; i++) {
-        int x = rand() % 800;
-        m.insert(x);
-    }
-    std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;
+    // for (int i = 0; i < 10000; i++) {
+    //     int x = rand() % 800;
+    //     m.insert(x);
+    // }
+    // std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;
     // std::cout << std::boolalpha <<  m.testRedBlack() << std::endl;
     // m.display(2, m.getRoot(), 2);
-    // m.printTree();
     // for (int i = 0; i < 10000; i++) {
     //     m.deleteNode(rand() % 100);
     // }
-    // Noeud<int> *t;
+    // Node<int> *t;
     // m.insert(10);
     // m.insert(50);
     // m.insert(5);
     // m.insert(25);
     // m.insert(28);
+    // // m.print();
+    // m.swap(25, 10);
+    // m.print();
+
     // m.insert(19);
     // m.insert(6);
     // m.insert(4);
@@ -64,10 +95,11 @@ int main() {
     // m.deleteNode(10);
     // std::cout << "*******************************" << std::endl;
     // m.display(2, m.getroot(), 2);
-    // // m.leftRotate(m.getroot());
+    // // m._leftRotate(m.getroot());
     // // m.display(2, m.getroot(), 2);
-    // // m.rigthRotate(m.getroot());
+    // // m._rigthRotate(m.getroot());
     // // t = m.search(25);
     // m.display(2, m.getroot(), 2);
+    
 
 };
