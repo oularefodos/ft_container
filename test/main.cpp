@@ -18,15 +18,19 @@ void f() {
 
 
 int main() {
-    ft::map<int, int> m;
+    ft::map<const int, int> m;
+    typedef std::map<const int, int> map;
+    std::map<const int, int> m2;
+    std::pair<map::iterator, bool> n;
     
     srand(time(NULL));
     for (int i = 0; i < 10; i++) {
         int x = rand() % 800;
-        m.insert(std::pair<int, int> (i, x));
-        std::cout << std::boolalpha <<  m.test() << std::endl;
+        m2.insert(m2.begin(), std::pair<int, int> (i, x));
+        int y = m2.erase(i);
+        std::cout << y <<std::endl;
     }
-    m.print();
+    // m.print();
     // compar<std::pair<int, int> > comp;
     // std::pair<int, int> m(1, 2);
     // std::pair<int, int> m2(4, 5);

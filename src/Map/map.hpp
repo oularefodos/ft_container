@@ -37,12 +37,17 @@ namespace ft {
             map(iterator first, iterator last) {
                 while (first != last) {
                     _tree.insert(*first);
+                    first++;
                 }
             }
             map(const map& lhs) : _tree(lhs._tree) {
 
             }
             ~map() {}
+
+            /** map& operator= (const map& x) : _tree(x._tree) {
+
+            } **/
 
         // to delete
         void print() {
@@ -64,6 +69,116 @@ namespace ft {
             }
             return std::pair<iterator, bool> (iterator(ret), n);
         }
+
+        template <class InputIterator> 
+        void insert (InputIterator first, InputIterator last) {
+            while (first != last) {
+                _tree.insert(*first);
+                first++;
+            }
+        }
+
+        void erase (iterator position) {
+            _tree.deleteNode(*position);
+        }
+
+      /**  size_t erase (const key_type& k) {
+            _tree.deleteNode(std::pair<Key, T> (k, k));
+            return (1);
+        } **/
+
+        void erase (iterator first, iterator last) {
+            while (first != last) {
+                _tree.deleteNode(*first);
+                first++;
+            }
+        }
+
+        /** iterator insert (iterator position, const value_type& val) {
+        } **/
+
+        void clear() {
+            _tree.deleteAll();
+        }
+
+        void swap (map& x) {
+            RedBlackTree<std::pair<const Key,T>, Comp> _temp = x._tree;
+            x._tree = this->_tree;
+            this->_tree = _temp;
+        }
+
+        // iterator 
+        iterator begin() {
+            return iterator(_tree.min());
+        }
+
+        const_iterator begin() const {
+            return const_iterator(_tree.min());
+        }
+
+        iterator end() {
+            return iterator(_tree.max()->rigth);
+        }
+
+        const_iterator end() const {
+            return const_iterator(_tree.max()->rigth);
+        }
+
+        // oberservers 
+
+        // key_compare key_comp() const {
+
+        // }
+
+        // iterator insert(iterator position, const value_type& val) {
+
+        // }
+
+
+        // capacity
+        bool empty() {
+            return _tree == 0;
+        }
+
+        size_t size() {
+            return _tree.size();
+        }
+
+        size_t max_size() {
+            return _tree.getAllocator().max_size();
+        }
+
+        // access element
+        mapped_type& operator[] (const key_type& k) {
+            Node<T> *ret = _tree.search(k);
+            if (ret && !ret->isNull) {
+                return ret->value.second;
+            }
+            return 0;
+        }
+
+        mapped_type& at (const key_type& k) {
+            Node<T> *ret = _tree.search(k);
+            if (!ret || ret->isNull)
+                throw std::out_of_range("out of range");
+            return ret->value.second;
+        }
+
+        const mapped_type& at (const key_type& k) const {
+            Node<T> *ret = _tree.search(k);
+            if (!ret || ret->isNull)
+                throw std::out_of_range("out of range");
+            return ret->value.second;
+        }
+
+        // allocator 
+        allocator_type get_allocator() const {
+            return _tree.getAllocator();
+        }
+
+        // iterator 
+        
+
     };
 
 };

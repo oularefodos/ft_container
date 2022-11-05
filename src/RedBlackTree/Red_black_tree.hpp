@@ -423,9 +423,7 @@ class RedBlackTree {
         }
 
         ~RedBlackTree() {
-            while (this->getRoot()) {
-                this->deleteNode(this->getRoot()->value);
-            }
+            this->deleteAll();
         }
 
         size_t size() {
@@ -434,6 +432,13 @@ class RedBlackTree {
 
         Node<T>* getRoot() {
             return root;
+        }
+
+        void deleteAll() {
+            while (this->getRoot()) {
+                this->deleteNode(this->getRoot()->value);
+            }
+            this->sz = 0;
         }
 
         Node<T>* search(T const& value)
@@ -504,6 +509,10 @@ class RedBlackTree {
             while (!temp->left->isNull)
                 temp = temp->left;
             return (temp);
+        }
+
+        std::allocator<Node<T> > getAllocator() {
+            return alloc;
         }
 
         Node<T>* max() {
