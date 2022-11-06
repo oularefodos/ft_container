@@ -72,6 +72,7 @@ class RedBlackTree_iterator {
             return m;
         }
     public:
+        RedBlackTree_iterator() {};
         RedBlackTree_iterator(Node<T> * _node) {node = _node;}
         RedBlackTree_iterator(RedBlackTree_iterator const& rhs) {
             this->node = rhs.node;
@@ -153,6 +154,48 @@ class RedBlackTree_iterator {
             return node->value;
         }
 };
+
+template <typename T>
+class Revers_Rbt_iterator {
+    private:
+        RedBlackTree_iterator<T> iterator;
+    public:
+        Revers_Rbt_iterator () {};
+        Revers_Rbt_iterator(Revers_Rbt_iterator<T> const& rhs) {
+            this->iterator = rhs.iterator;
+        }
+        Revers_Rbt_iterator(RedBlackTree_iterator<T> const& iter) {
+            iterator = iter;
+        } 
+        Revers_Rbt_iterator operator=(Revers_Rbt_iterator<T> const& rhs) {
+            this->iterator = rhs.iterator;
+            return *this;
+        }
+        Revers_Rbt_iterator operator++() {
+            --iterator;
+            return *this;
+        }
+        Revers_Rbt_iterator operator++(int) {
+            iterator--;
+            return *this;
+        }
+        Revers_Rbt_iterator operator--() {
+            ++iterator;
+            return *this;
+        }
+        Revers_Rbt_iterator operator--(int) {
+            iterator++;
+            return *this;
+        }
+
+        Revers_Rbt_iterator operator*() {
+            return *iterator;
+        }
+        Revers_Rbt_iterator operator->() {
+            return iterator;
+        }
+};
+
 
 template <typename T, class Compar>
 class RedBlackTree {

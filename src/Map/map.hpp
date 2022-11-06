@@ -7,18 +7,7 @@ namespace ft {
     template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<std::pair<const Key,T> > > 
     class map
     {
-        private:
-            typedef Key key_type;
-            typedef T mapped_type;
-            typedef std::pair<const key_type, mapped_type> value_type;
-            typedef Alloc allocator_type;
-            typedef typename allocator_type::reference reference;
-            typedef typename allocator_type::const_reference const_reference;
-            typedef typename allocator_type::pointer pointer;
-            typedef typename allocator_type::const_pointer const_pointer;
-            typedef RedBlackTree_iterator<value_type> iterator;
-            typedef RedBlackTree_iterator<const value_type> const_iterator;
-            // typedef typename iterator_traits<iterator>::difference_type difference_type;
+        protected:
             class Comp{
                 private:
                     Compare _comp;
@@ -30,6 +19,22 @@ namespace ft {
                         return _comp(lhs.first, rhs.first);
                     }
             };
+        public:
+            typedef Key key_type;
+            typedef T mapped_type;
+            typedef Compare key_compare;
+            typedef Comp value_compare;
+            typedef std::pair<const key_type, mapped_type> value_type;
+            typedef Alloc allocator_type;
+            typedef typename allocator_type::reference reference;
+            typedef typename allocator_type::const_reference const_reference;
+            typedef typename allocator_type::pointer pointer;
+            typedef typename allocator_type::const_pointer const_pointer;
+            typedef RedBlackTree_iterator<value_type> iterator;
+            typedef RedBlackTree_iterator<const value_type> const_iterator;
+            typedef Revers_Rbt_iterator<const value_type> const_reverse_iterator;
+            typedef Revers_Rbt_iterator<value_type> reverse_iterator;
+            // typedef typename iterator_traits<iterator>::difference_type difference_type;
             RedBlackTree<std::pair<const Key,T>, Comp> _tree;
         public:
         // constructor
@@ -82,10 +87,10 @@ namespace ft {
             _tree.deleteNode(*position);
         }
 
-      /**  size_t erase (const key_type& k) {
-            _tree.deleteNode(std::pair<Key, T> (k, k));
+        size_t erase (const key_type& k) {
+            _tree.deleteNode(std::pair<Key, T> (k, T()));
             return (1);
-        } **/
+        } 
 
         void erase (iterator first, iterator last) {
             while (first != last) {
@@ -94,8 +99,10 @@ namespace ft {
             }
         }
 
-        /** iterator insert (iterator position, const value_type& val) {
-        } **/
+        iterator insert (iterator position, const value_type& val) {
+            (void)position;
+            _tree.insert(val);
+        } 
 
         void clear() {
             _tree.deleteAll();
@@ -124,16 +131,35 @@ namespace ft {
             return const_iterator(_tree.max()->rigth);
         }
 
+        reverse_iterator rbegin() {
+            iterator iter(_tree.max());
+            return reverse_iterator(iter);
+        }
+
+        const_reverse_iterator rbegin() const {
+            iterator iter(_tree.max());
+            return const_reverse_iterator(iter);
+        }
+
+        reverse_iterator rend() {
+            iterator iter(_tree.min()->left);
+            return reverse_iterator(iter);
+        }
+
+        const_reverse_iterator rend() const {
+            iterator iter(_tree.min()->left);
+            return const_reverse_iterator(iter);
+        }
+
         // oberservers 
 
-        // key_compare key_comp() const {
+        key_compare key_comp() const {
+            return key_compare();
+        }
 
-        // }
-
-        // iterator insert(iterator position, const value_type& val) {
-
-        // }
-
+        value_compare value_comp() const {
+            return value_compare();
+        }
 
         // capacity
         bool empty() {
@@ -176,9 +202,82 @@ namespace ft {
             return _tree.getAllocator();
         }
 
-        // iterator 
+        // Operations 
+        iterator find (const key_type& k) {
+            Node<value_type>* ret = _tree.search(std::pair<key_type, T> (k, T()));
+            if (ret && !ret->isNull) {
+                return iterator(ret);
+            }
+            return end();
+        }
         
+        const_iterator find (const key_type& k) const {
+            Node<value_type>* ret = _tree.search(std::pair<key_type, T> (k, T()));
+            if (ret && !ret->isNull) {
+                return const_iterator(ret);
+            }
+            return end();
+        }
 
+        size_t count (const key_type& k) const {
+            Node<value_type>* ret = _tree.search(std::pair<key_type, T> (k, T()));
+            if (ret && !ret->isNull) {
+                return 1;
+            }
+            return 0;
+        }
+
+        iterator lower_bound (const key_type& k) {
+            Node<value_type>* ret = _tree.search(std::pair<key_type, T> (k, T()));
+            if (ret && !ret->isNull) {
+                return iterator(ret);
+            }
+            else if (ret && ret->isNull)
+            {
+                if (ret != _tree.max()->rigth)
+                    ret = ret->parrent;
+                return (++iterator(ret));
+            }
+            else
+                return end();
+        }
+
+        const_iterator lower_bound (const key_type& k) const{
+            Node<value_type>* ret = _tree.search(std::pair<key_type, T> (k, T()));
+            if (ret && !ret->isNull) {
+                return const_iterator(ret);
+            }
+            else if (ret && ret->isNull)
+            {
+                if (ret != _tree.max()->rigth)
+                    ret = ret->parrent;
+                return (++const_iterator(ret));
+            }
+            else
+                return end();
+        }
+
+        iterator upper_bound (const key_type& k) {
+            Node<value_type>* ret = _tree.search(std::pair<key_type, T> (k, T()));
+            if (ret) {
+                if (ret->isNull && ret != _tree.max()->rigth)
+                    ret = ret->parrent;
+                return (++iterator(ret));
+            }
+            else 
+                return end();
+        }
+
+        const_iterator upper_bound (const key_type& k) const{
+            Node<value_type>* ret = _tree.search(std::pair<key_type, T> (k, T()));
+            if (ret) {
+                if (ret->isNull && ret != _tree.max()->rigth)
+                    ret = ret->parrent;
+                return (++const_iterator(ret));
+            }
+            else 
+                return end();
+        }
     };
 
 };

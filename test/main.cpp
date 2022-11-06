@@ -20,16 +20,23 @@ void f() {
 int main() {
     ft::map<const int, int> m;
     typedef std::map<const int, int> map;
+    typedef ft::map<const int, int> map2;
     std::map<const int, int> m2;
     std::pair<map::iterator, bool> n;
     
     srand(time(NULL));
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; i+=2) {
         int x = rand() % 800;
-        m2.insert(m2.begin(), std::pair<int, int> (i, x));
-        int y = m2.erase(i);
-        std::cout << y <<std::endl;
+        m.insert(std::pair<int, int> (i, x));
+        m2.insert(std::pair<int, int> (i, x));
+        // int y = m2.erase(i);
+        std::cout << "m : " << x <<std::endl;
     }
+
+    map::iterator xy = m2.upper_bound(1);
+    map2::iterator xyz = m.upper_bound(1);
+    std::cout << (*xy).second << std::endl;
+    std::cout << (*xyz).second << std::endl;
     // m.print();
     // compar<std::pair<int, int> > comp;
     // std::pair<int, int> m(1, 2);
