@@ -4,6 +4,8 @@
 #include "../src/Stack/Stack.hpp"
 #include "../src/RedBlackTree/Red_black_tree.hpp"
 #include "../src/Map/map.hpp"
+#include "../src/Set/set.hpp"
+#include "../src/Utils/utils.hpp"
 #include <vector>
 #include <map>
 #include <cstdlib>
@@ -18,16 +20,16 @@ void f() {
 
 
 int main() {
-    ft::map<const int, int> m;
+    ft::set<const int, int> m;
     typedef std::map<const int, int> map;
-    typedef ft::map<const int, int> map2;
+    typedef ft::set<const int, int> map2;
     std::map<const int, int> m2;
     std::pair<map::iterator, bool> n;
     
     srand(time(NULL));
     for (int i = 0; i < 10; i+=2) {
         int x = rand() % 800;
-        m.insert(std::pair<int, int> (i, x));
+        m.insert(x);
         m2.insert(std::pair<int, int> (i, x));
         // int y = m2.erase(i);
         std::cout << "m : " << x <<std::endl;
@@ -36,7 +38,7 @@ int main() {
     map::iterator xy = m2.upper_bound(1);
     map2::iterator xyz = m.upper_bound(1);
     std::cout << (*xy).second << std::endl;
-    std::cout << (*xyz).second << std::endl;
+    std::cout << (*xyz)<< std::endl;
     // m.print();
     // compar<std::pair<int, int> > comp;
     // std::pair<int, int> m(1, 2);

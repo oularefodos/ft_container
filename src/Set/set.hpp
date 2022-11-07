@@ -1,12 +1,12 @@
-#ifndef Map_HPP
-#define Map_HPP
+#ifndef SET_HPP
+#define SET_HPP
 #include "../RedBlackTree/Red_black_tree.hpp"
 #include "../Utils/utils.hpp"
 #include "../Iterator/Iterator_traits.hpp"
 
 namespace ft {
-    template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key,T> > > 
-    class map
+    template < class T, class Compare = std::less<T>, class Alloc = std::allocator<T> >
+    class set
     {
         protected:
             class Comp{
@@ -16,18 +16,17 @@ namespace ft {
                     Comp(Compare _com = Compare()) {
                         _comp = _com;
                     };
-                    bool operator()( const ft::pair<const Key,T>& lhs, const ft::pair<const Key,T>& rhs ) const{
-                        return _comp(lhs.first, rhs.first);
+                    bool operator()( const T& lhs, const T& rhs ) const{
+                        return _comp(lhs, rhs);
                     }
             };
             Comp _comp;
-            RedBlackTree<ft::pair<const Key,T>, Comp> _tree;
+            RedBlackTree<T, Comp> _tree;
         public:
-            typedef Key key_type;
-            typedef T mapped_type;
+            typedef T key_type;
             typedef Compare key_compare;
             typedef Comp value_compare;
-            typedef ft::pair<const key_type, mapped_type> value_type;
+            typedef T value_type;
             typedef Alloc allocator_type;
             typedef typename allocator_type::reference reference;
             typedef typename allocator_type::const_reference const_reference;
@@ -40,23 +39,23 @@ namespace ft {
             // typedef typename iterator_traits<iterator>::difference_type difference_type;
         public:
         // constructor
-            map() {
+            set() {
                 this->_comp = Comp();
             }
-            map(iterator first, iterator last) {
+            set(iterator first, iterator last) {
                 this->_comp = Comp();
                 while (first != last) {
                     _tree.insert(*first);
                     first++;
                 }
             }
-            map(const map& lhs) : _tree(lhs._tree) {
+            set(const set& lhs) : _tree(lhs._tree) {
                 this->_comp = lhs._comp;
                 this->Comp = lhs.Comp;
             }
-            ~map() {}
+            ~set() {}
 
-            map& operator= (const map& x) {
+            set& operator= (const set& x) {
                 this->_tree = x._tree;
                 this->_comp = x._comp;
                 this->Comp = x.Comp;
@@ -96,7 +95,7 @@ namespace ft {
         }
 
         size_t erase (const key_type& k) {
-            _tree.deleteNode(ft::pair<Key, T> (k, T()));
+            _tree.deleteNode(k);
             return (1);
         } 
 
@@ -116,8 +115,8 @@ namespace ft {
             _tree.deleteAll();
         }
 
-        void swap (map& x) {
-            map temp = x;
+        void swap (set& x) {
+            set temp = x;
             *this = x;
             x = temp;
         }
@@ -183,7 +182,7 @@ namespace ft {
         }
 
         // access element
-        mapped_type& operator[] (const key_type& k) {
+        value_type& operator[] (const key_type& k) {
             Node<T> *ret = _tree.search(k);
             if (ret && !ret->isNull) {
                 return ret->value.second;
@@ -191,14 +190,14 @@ namespace ft {
             return 0;
         }
 
-        mapped_type& at (const key_type& k) {
+        value_type& at (const key_type& k) {
             Node<T> *ret = _tree.search(k);
             if (!ret || ret->isNull)
                 throw std::out_of_range("out of range");
             return ret->value.second;
         }
 
-        const mapped_type& at (const key_type& k) const {
+        const value_type& at (const key_type& k) const {
             Node<T> *ret = _tree.search(k);
             if (!ret || ret->isNull)
                 throw std::out_of_range("out of range");
@@ -212,7 +211,7 @@ namespace ft {
 
         // Operations 
         iterator find (const key_type& k) {
-            Node<value_type>* ret = _tree.search(ft::pair<key_type, T> (k, T()));
+            Node<value_type>* ret = _tree.search(k);
             if (ret && !ret->isNull) {
                 return iterator(ret);
             }
@@ -220,7 +219,7 @@ namespace ft {
         }
         
         const_iterator find (const key_type& k) const {
-            Node<value_type>* ret = _tree.search(ft::pair<key_type, T> (k, T()));
+            Node<value_type>* ret = _tree.search(k);
             if (ret && !ret->isNull) {
                 return const_iterator(ret);
             }
@@ -228,7 +227,7 @@ namespace ft {
         }
 
         size_t count (const key_type& k) const {
-            Node<value_type>* ret = _tree.search(ft::pair<key_type, T> (k, T()));
+            Node<value_type>* ret = _tree.search(k);
             if (ret && !ret->isNull) {
                 return 1;
             }
@@ -236,7 +235,7 @@ namespace ft {
         }
 
         iterator lower_bound (const key_type& k) {
-            Node<value_type>* ret = _tree.search(ft::pair<key_type, T> (k, T()));
+            Node<value_type>* ret = _tree.search(k);
             if (ret && !ret->isNull) {
                 return iterator(ret);
             }
@@ -251,7 +250,7 @@ namespace ft {
         }
 
         const_iterator lower_bound (const key_type& k) const{
-            Node<value_type>* ret = _tree.search(ft::pair<key_type, T> (k, T()));
+            Node<value_type>* ret = _tree.search(k);
             if (ret && !ret->isNull) {
                 return const_iterator(ret);
             }
@@ -266,7 +265,7 @@ namespace ft {
         }
 
         iterator upper_bound (const key_type& k) {
-            Node<value_type>* ret = _tree.search(ft::pair<key_type, T> (k, T()));
+            Node<value_type>* ret = _tree.search(k);
             if (ret) {
                 if (ret->isNull && ret != _tree.max()->rigth)
                     ret = ret->parrent;
@@ -277,7 +276,7 @@ namespace ft {
         }
 
         const_iterator upper_bound (const key_type& k) const{
-            Node<value_type>* ret = _tree.search(ft::pair<key_type, T> (k, T()));
+            Node<value_type>* ret = _tree.search(k);
             if (ret) {
                 if (ret->isNull && ret != _tree.max()->rigth)
                     ret = ret->parrent;

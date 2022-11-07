@@ -372,7 +372,7 @@ class RedBlackTree {
             }
             node->color = BLACK;
         }
-#if 1
+#if 0
         size_t _getBlackHeight(Node<T>*node) const {
                 if (!node || node->isNull) return 0;
                 size_t leftHeight = _getBlackHeight(node->left);
@@ -460,9 +460,27 @@ class RedBlackTree {
         }
 
         RedBlackTree(RedBlackTree const& rhs) {
-            _comp = Compar();
-            this->node = rhs.node;
+            RedBlackTree_iterator<T> first(rhs.min());
+            RedBlackTree_iterator<T> last(rhs.max()->rigth);
+            while(first != last) {
+                insert(*first);
+                first++;
+            }
+            this->_comp = rhs._comp;
             this->sz = rhs.sz; 
+        }
+        
+        RedBlackTree& operator=(RedBlackTree const& rhs) {
+            this->deleteAll();
+            RedBlackTree_iterator<T> first(rhs.min());
+            RedBlackTree_iterator<T> last(rhs.max()->rigth);
+            while(first != last) {
+                insert(*first);
+                first++;
+            }
+            this->_comp = rhs._comp;
+            this->sz = rhs.sz;
+            return *this;
         }
 
         ~RedBlackTree() {
@@ -591,7 +609,7 @@ class RedBlackTree {
         }
 
        
-#if 1
+#if 0
         bool testRedBlack() const {
             return _testRedBlack(root);
         }
