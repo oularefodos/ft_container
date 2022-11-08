@@ -20,25 +20,29 @@ void f() {
 
 
 int main() {
-    ft::set<const int, int> m;
-    typedef std::map<const int, int> map;
-    typedef ft::set<const int, int> map2;
-    std::map<const int, int> m2;
-    std::pair<map::iterator, bool> n;
+    // ft::map< int, int> m;
+    typedef ft::map< int, int> map;
+    // typedef ft::map< int, int> map2;
+    ft::map< int, int> m2;
+    // std::pair<map::iterator, bool> n;
     
-    srand(time(NULL));
-    for (int i = 0; i < 10; i+=2) {
+    // srand(time(NULL));
+    for (int i = 0; i < 20; i+=2) {
         int x = rand() % 800;
-        m.insert(x);
-        m2.insert(std::pair<int, int> (i, x));
+        // m.insert(ft::pair<int, int> (i, x));
+        m2.insert(ft::pair<const int, int> (i, i));
         // int y = m2.erase(i);
-        std::cout << "m : " << x <<std::endl;
+        std::cout << "m : " << x << std::endl;
     }
-
-    map::iterator xy = m2.upper_bound(1);
-    map2::iterator xyz = m.upper_bound(1);
-    std::cout << (*xy).second << std::endl;
-    std::cout << (*xyz)<< std::endl;
+    map::reverse_iterator xy = m2.rbegin();
+    m2.print();
+    for (int i = 0; i < 20; i += 2) {
+        ++xy;
+        std::cout << (*xy).second << std::endl;
+    }
+    // map2::iterator xyz = m.upper_bound(10000);
+    // std::cout << (*xy).second << std::endl;
+    // std::cout << (*xyz).second << std::endl;
     // m.print();
     // compar<std::pair<int, int> > comp;
     // std::pair<int, int> m(1, 2);

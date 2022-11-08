@@ -265,13 +265,16 @@ namespace ft {
         }
 
         iterator upper_bound (const key_type& k) {
-            Node<value_type>* ret = _tree.search(k);
-            if (ret) {
-                if (ret->isNull && ret != _tree.max()->rigth)
-                    ret = ret->parrent;
-                return (++iterator(ret));
+            Node<value_type> node = _tree.search(k);
+            if (!node->isNull)
+                return (++iterator(node));
+            else if (node->isNull) {
+                node = node->parrent;
+                if (node != node->parrent->left)
+                    return (++iterator(node));
+                return (iterator(node));
             }
-            else 
+            else
                 return end();
         }
 

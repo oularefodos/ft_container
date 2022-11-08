@@ -23,13 +23,7 @@ class Node {
             this->parrent = _parrent;
             this->isNull = false;
             this->left = alloc.allocate(1);
-            this->left->isNull = true;
-            this->left->parrent = this;
-            this->left->color = BLACK;
             this->rigth = alloc.allocate(1);
-            this->rigth->isNull = true;
-            this->rigth->parrent = this;
-            this->rigth->color = BLACK;
         }
 };
 
@@ -37,6 +31,8 @@ template <typename T>
 class RedBlackTree_iterator {
     private:
         Node<T>* node;
+        Node<T>* _end;
+        
         Node<T>* begin(Node<T>* root) {
             Node<T>* temp;
             temp = root;
@@ -44,6 +40,7 @@ class RedBlackTree_iterator {
                 temp = temp->left;
             return (temp);
         }
+
         Node<T>* end(Node<T>* root) {
             Node<T>* temp;
             temp = root;
@@ -73,26 +70,35 @@ class RedBlackTree_iterator {
         }
     public:
         RedBlackTree_iterator() {};
-        RedBlackTree_iterator(Node<T> * _node) {node = _node;}
+        RedBlackTree_iterator(Node<T> * _node, Node<T> *end) {
+            node = _node;
+             _end = end;
+        }
         RedBlackTree_iterator(RedBlackTree_iterator const& rhs) {
             this->node = rhs.node;
+            this->_end = rhs._end;
         }
 
         RedBlackTree_iterator& operator=(RedBlackTree_iterator const& rhs) {
             this->node = rhs.node;
+            this->_end = rhs._end;
             return *this;
         }
 
-        Node<T>* operator->(){
-            return this->node;
+        Node<T>* operator->() {
+            return (node == max(node)->rigth ? this->_end : (node == min(node)->left ? NULL : node));
         }
 
         Node<const T>* operator->() const {
-            return this->node;
+            return (node == max(node)->rigth ? this->_end : (node == min(node)->left ? NULL : node));
         }
 
         RedBlackTree_iterator& operator++() {
-            if (node && !node->isNull) {
+            if(node == max(node)->rigth)
+                node = NULL;
+            else if (node == min(node)->left)
+                node = min(node);
+            else if (node && !node->isNull) {
                 if (node->parrent == NULL)
                     node = begin(node->rigth);
                 else if (max(node) == node) 
@@ -114,6 +120,10 @@ class RedBlackTree_iterator {
         }
 
         RedBlackTree_iterator& operator--() {
+            if (node == min(node)->left)
+                node = NULL;
+            if(node == max(node)->rigth)
+                node = max(node);
             if (node && !node->isNull) {
                 if (node->parrent == NULL)
                     node = end(node->left);
@@ -151,7 +161,8 @@ class RedBlackTree_iterator {
         }
 
         T& operator*() {
-            return node->value;
+            Node<T> *ret = (node == max(node)->rigth ? this->_end : (node == min(node)->left ? NULL : node));
+            return ret->value;
         }
 };
 
@@ -188,7 +199,7 @@ class Revers_Rbt_iterator {
             return *this;
         }
 
-        Revers_Rbt_iterator operator*() {
+        T& operator*() {
             return *iterator;
         }
         Revers_Rbt_iterator operator->() {
@@ -201,6 +212,7 @@ template <typename T, class Compar>
 class RedBlackTree {
     private:
         Node<T> *root;
+        Node<T> *_end;
         size_t sz;
         Compar _comp;
         std::allocator<Node<T> > alloc;
@@ -208,6 +220,14 @@ class RedBlackTree {
         void _init(Node<T>* parrent, Node<T>* node, int _color, T _value)
         {
             alloc.construct(node, Node<T>(_color, parrent, _value, alloc));
+            node->left->parrent = node;
+            node->left->isNull = true;
+            node->left->color = BLACK;
+            node->rigth->parrent = node;
+            node->rigth->isNull = true;
+            node->rigth->color = BLACK;
+        }
+        void _actualise_end() {
         }
 
         void _changePosition(Node<T>* s1, Node<T>* s2) {
@@ -228,6 +248,7 @@ class RedBlackTree {
                 s1->parrent->rigth = new_node;
             alloc.destroy(s1);
             alloc.deallocate(s1, 1);
+            _actualise_end();
         }
 
         void _rigthRotate (Node<T> *node) {
@@ -246,6 +267,7 @@ class RedBlackTree {
             left->rigth = node;
             if (left->parrent == NULL)
                 this->root = left;
+            _actualise_end();
         }
 
         void _leftRotate(Node<T>* node) {
@@ -264,6 +286,7 @@ class RedBlackTree {
             rigth->left = node;
             if (rigth->parrent == NULL)
                 this->root = rigth;
+            _actualise_end();
         }
 
         void _InsertFix(Node<T>* node) {
@@ -372,7 +395,7 @@ class RedBlackTree {
             }
             node->color = BLACK;
         }
-#if 0
+#if 1
         size_t _getBlackHeight(Node<T>*node) const {
                 if (!node || node->isNull) return 0;
                 size_t leftHeight = _getBlackHeight(node->left);
@@ -454,12 +477,14 @@ class RedBlackTree {
     public:
 
         RedBlackTree () { 
+            _end = alloc.allocate(1);
             _comp = Compar();
             root = NULL; 
             sz = 0;
         }
 
         RedBlackTree(RedBlackTree const& rhs) {
+            _end = alloc.allocate(1);
             RedBlackTree_iterator<T> first(rhs.min());
             RedBlackTree_iterator<T> last(rhs.max()->rigth);
             while(first != last) {
@@ -484,6 +509,7 @@ class RedBlackTree {
         }
 
         ~RedBlackTree() {
+            // alloc.deallocate(_end, 1);
             this->deleteAll();
         }
 
@@ -561,6 +587,7 @@ class RedBlackTree {
                 }
                 if (!i)
                     _InsertFix(temp);
+                _actualise_end();
             }
         }
 
@@ -582,6 +609,10 @@ class RedBlackTree {
             while (!temp->rigth->isNull)
                 temp = temp->rigth;
             return (temp);
+        }
+
+        Node<T>* end() {
+            return _end;
         }
 
         void deleteNode(T const& value) {
@@ -606,10 +637,11 @@ class RedBlackTree {
             }
             if (color_deleted == BLACK && temp)
                 _deleteFix(temp);
+            _actualise_end();
         }
 
        
-#if 0
+#if 1
         bool testRedBlack() const {
             return _testRedBlack(root);
         }
