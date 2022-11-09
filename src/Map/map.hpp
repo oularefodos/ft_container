@@ -3,6 +3,8 @@
 #include "../RedBlackTree/Red_black_tree.hpp"
 #include "../Utils/utils.hpp"
 #include "../Iterator/Iterator_traits.hpp"
+#include "../Iterator/RBT_iterator.hpp"
+
 
 namespace ft {
     template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key,T> > > 
@@ -214,7 +216,7 @@ namespace ft {
         iterator find (const key_type& k) {
             Node<value_type>* ret = _tree.search(ft::pair<key_type, T> (k, T()));
             if (ret && !ret->isNull) {
-                return iterator(ret);
+                return iterator(ret, _tree.end());
             }
             return end();
         }
@@ -222,7 +224,7 @@ namespace ft {
         const_iterator find (const key_type& k) const {
             Node<value_type>* ret = _tree.search(ft::pair<key_type, T> (k, T()));
             if (ret && !ret->isNull) {
-                return const_iterator(ret);
+                return const_iterator(ret, _tree.end());
             }
             return end();
         }
@@ -238,13 +240,14 @@ namespace ft {
         iterator lower_bound (const key_type& k) {
             Node<value_type>* ret = _tree.search(ft::pair<key_type, T> (k, T()));
             if (ret && !ret->isNull) {
-                return iterator(ret);
+                return iterator(ret, _tree.end());
             }
-            else if (ret && ret->isNull)
+            else if (ret->parrent)
             {
-                if (ret != _tree.max()->rigth)
-                    ret = ret->parrent;
-                return (++iterator(ret));
+                if (ret != ret->parrent->left)
+                    return (++iterator(ret->parrent, _tree.end()));
+                ret = ret->parrent;
+                return (iterator(ret, _tree.end()));
             }
             else
                 return end();
@@ -253,13 +256,14 @@ namespace ft {
         const_iterator lower_bound (const key_type& k) const{
             Node<value_type>* ret = _tree.search(ft::pair<key_type, T> (k, T()));
             if (ret && !ret->isNull) {
-                return const_iterator(ret);
+                return const_iterator(ret, _tree.end());
             }
-            else if (ret && ret->isNull)
+            else if (ret->parrent)
             {
-                if (ret != _tree.max()->rigth)
-                    ret = ret->parrent;
-                return (++const_iterator(ret));
+                if (ret != ret->parrent->left)
+                    return (++const_iterator(ret->parrent, _tree.end()));
+                ret = ret->parrent;
+                return (const_iterator(ret, _tree.end()));
             }
             else
                 return end();
@@ -268,12 +272,12 @@ namespace ft {
         iterator upper_bound (const key_type& k) {
            Node<value_type> *node = _tree.search(ft::make_pair(k, T()));
             if (!node->isNull)
-                return (++iterator(node));
+                return (++iterator(node, _tree.end()));
             else if (node->parrent) {
                 if (node != node->parrent->left)
-                    return (++iterator(node->parrent));
+                    return (++iterator(node->parrent, _tree.end()));
                 node = node->parrent;
-                return (iterator(node));
+                return (iterator(node, _tree.end()));
             }
             else
                 return end();
@@ -282,12 +286,12 @@ namespace ft {
         const_iterator upper_bound (const key_type& k) const{
             Node<value_type> *node = _tree.search(ft::make_pair(k, T()));
             if (!node->isNull)
-                return (++const_iterator(node));
+                return (++const_iterator(node, _tree.end()));
             else if (node->parrent) {
                 if (node != node->parrent->left)
-                    return (++const_iterator(node->parrent));
+                    return (++const_iterator(node->parrent, _tree.end()));
                 node = node->parrent;
-                return (const_iterator(node));
+                return (const_iterator(node, _tree.end()));
             }
             else
                 return end();

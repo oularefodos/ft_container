@@ -7,6 +7,7 @@
 #include "../src/Set/set.hpp"
 #include "../src/Utils/utils.hpp"
 #include <vector>
+#include <set>
 #include <map>
 #include <cstdlib>
 #include <ctime>
@@ -20,29 +21,30 @@ void f() {
 
 
 int main() {
-    // ft::map< int, int> m;
-    typedef ft::map< int, int> map;
-    // typedef ft::map< int, int> map2;
-    ft::map< int, int> m2;
+    ft::set<int> m;
+    typedef std::set< int> map;
+    typedef ft::set< int> map2;
+    std::set<int> m2;
     // std::pair<map::iterator, bool> n;
     
     // srand(time(NULL));
-    for (int i = 0; i < 20; i+=2) {
+    for (int i = 0; i < 20000; i+=1) {
         int x = rand() % 800;
-        // m.insert(ft::pair<int, int> (i, x));
-        m2.insert(ft::pair<const int, int> (i, i));
+        m.insert(i);
+        m2.insert(i);
         // int y = m2.erase(i);
         std::cout << "m : " << x << std::endl;
     }
-    map::reverse_iterator xy = m2.rbegin();
-    m2.print();
-    for (int i = 0; i < 20; i += 2) {
-        ++xy;
-        std::cout << (*xy).second << std::endl;
-    }
-    // map2::iterator xyz = m.upper_bound(10000);
-    // std::cout << (*xy).second << std::endl;
-    // std::cout << (*xyz).second << std::endl;
+    // map::iterator xy = m2.begin();
+    // // m2.print();
+    // for (int i = 0; i < 20000; i += 1) {
+    //     std::cout << (*xy).first << std::endl;
+    //     xy++;
+    // }
+    map2::iterator xyz = m.lower_bound(-100000);
+    map::iterator xy = m2.lower_bound(-100000);
+    std::cout << (*xy) << std::endl;
+    std::cout << (*xyz) << std::endl;
     // m.print();
     // compar<std::pair<int, int> > comp;
     // std::pair<int, int> m(1, 2);

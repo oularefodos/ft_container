@@ -1,6 +1,5 @@
 #ifndef RED_BLACK_TREE_HPP
 #define RED_BLACK_TREE_HPP
-
  #define RED 1
  #define BLACK 0
 
@@ -27,186 +26,7 @@ class Node {
         }
 };
 
-template <typename T>
-class RedBlackTree_iterator {
-    private:
-        Node<T>* node;
-        Node<T>* _end;
-        
-        Node<T>* begin(Node<T>* root) {
-            Node<T>* temp;
-            temp = root;
-            while (!temp->left->isNull)
-                temp = temp->left;
-            return (temp);
-        }
-
-        Node<T>* end(Node<T>* root) {
-            Node<T>* temp;
-            temp = root;
-            if (temp->isNull)
-                return temp;
-            while (!temp->rigth->isNull)
-                temp = temp->rigth;
-            return (temp);
-        }
-        Node<T>* getRoot(Node<T>* _node) {
-            Node<T> *root = _node;
-            while (root->parrent)
-                root = root->parrent;
-            return root;
-        }
-        Node<T>* max(Node<T>* _node) {
-            Node<T>* m = getRoot(_node);
-            while (!m->rigth->isNull)
-                m = m->rigth;
-            return m;
-        }
-        Node<T>* min(Node<T>* _node) {
-            Node<T>* m = getRoot(_node);
-            while (!m->left->isNull)
-                m = m->left;
-            return m;
-        }
-    public:
-        RedBlackTree_iterator() {};
-        RedBlackTree_iterator(Node<T> * _node, Node<T> *end) {
-            node = _node;
-             _end = end;
-        }
-        RedBlackTree_iterator(RedBlackTree_iterator const& rhs) {
-            this->node = rhs.node;
-            this->_end = rhs._end;
-        }
-
-        RedBlackTree_iterator& operator=(RedBlackTree_iterator const& rhs) {
-            this->node = rhs.node;
-            this->_end = rhs._end;
-            return *this;
-        }
-
-        Node<T>* operator->() {
-            return (node == max(node)->rigth ? this->_end : (node == min(node)->left ? NULL : node));
-        }
-
-        Node<const T>* operator->() const {
-            return (node == max(node)->rigth ? this->_end : (node == min(node)->left ? NULL : node));
-        }
-
-        RedBlackTree_iterator& operator++() {
-            if(node == max(node)->rigth)
-                node = NULL;
-            else if (node == min(node)->left)
-                node = min(node);
-            else if (node && !node->isNull) {
-                if (node->parrent == NULL)
-                    node = begin(node->rigth);
-                else if (max(node) == node) 
-                    node = node->rigth;
-                else if (node->parrent && node == node->parrent->left && node->rigth->isNull)
-                    node = node->parrent;
-                else if (node->parrent && node == node->parrent->left && !node->rigth->isNull)
-                    node = begin(node->rigth);
-                else if (node->parrent && node == node->parrent->rigth && !node->rigth->isNull)
-                    node = node->rigth;
-                else {
-                    while (node->parrent == node->parrent->parrent->rigth)
-                        node = node->parrent;
-                    if (node && node->parrent)
-                        node = node->parrent->parrent;
-                }
-            }
-            return *this;
-        }
-
-        RedBlackTree_iterator& operator--() {
-            if (node == min(node)->left)
-                node = NULL;
-            if(node == max(node)->rigth)
-                node = max(node);
-            if (node && !node->isNull) {
-                if (node->parrent == NULL)
-                    node = end(node->left);
-                else if (min(node) == node)
-                    node = node->left;
-                else if (node->parrent && node == node->parrent->rigth && node->left->isNull)
-                    node = node->parrent;
-                else if (node->parrent && node == node->parrent->rigth && !node->left->isNull)
-                    node = end(node->left);
-                else if (node->parrent && node == node->parrent->left && !node->left->isNull)
-                    node = node->left;
-                else {
-                    while (node->parrent == node->parrent->parrent->left)
-                        node = node->parrent;
-                    node = node->parrent->parrent;
-                }
-            }
-            return *this;
-        }
-
-        RedBlackTree_iterator operator++(int) {
-            RedBlackTree_iterator temp(node);
-            ++(*this);
-            return temp;
-        }
-
-        RedBlackTree_iterator operator--(int) {
-            RedBlackTree_iterator temp(node);
-            --(*this);
-            return temp;
-        }
-
-        bool ret() {
-            return node->isNull;
-        }
-
-        T& operator*() {
-            Node<T> *ret = (node == max(node)->rigth ? this->_end : (node == min(node)->left ? NULL : node));
-            return ret->value;
-        }
-};
-
-template <typename T>
-class Revers_Rbt_iterator {
-    private:
-        RedBlackTree_iterator<T> iterator;
-    public:
-        Revers_Rbt_iterator () {};
-        Revers_Rbt_iterator(Revers_Rbt_iterator<T> const& rhs) {
-            this->iterator = rhs.iterator;
-        }
-        Revers_Rbt_iterator(RedBlackTree_iterator<T> const& iter) {
-            iterator = iter;
-        } 
-        Revers_Rbt_iterator operator=(Revers_Rbt_iterator<T> const& rhs) {
-            this->iterator = rhs.iterator;
-            return *this;
-        }
-        Revers_Rbt_iterator operator++() {
-            --iterator;
-            return *this;
-        }
-        Revers_Rbt_iterator operator++(int) {
-            iterator--;
-            return *this;
-        }
-        Revers_Rbt_iterator operator--() {
-            ++iterator;
-            return *this;
-        }
-        Revers_Rbt_iterator operator--(int) {
-            iterator++;
-            return *this;
-        }
-
-        T& operator*() {
-            return *iterator;
-        }
-        Revers_Rbt_iterator operator->() {
-            return iterator;
-        }
-};
-
+#include "../Iterator/RBT_iterator.hpp"
 
 template <typename T, class Compar>
 class RedBlackTree {
@@ -395,30 +215,7 @@ class RedBlackTree {
             }
             node->color = BLACK;
         }
-#if 1
-        size_t _getBlackHeight(Node<T>*node) const {
-                if (!node || node->isNull) return 0;
-                size_t leftHeight = _getBlackHeight(node->left);
-                return leftHeight + (node->color == BLACK);
-            }
 
-        bool _testRedBlack(Node<T>*node) const {
-            if (!node || node->isNull) return true;
-            if (node->color == RED) {
-                if (node->left->color == RED || node->rigth->color == RED) {
-                    std::cout << "Red\n";
-                    return false;
-                }
-            }
-            int leftBlackHeight = _getBlackHeight(node->left);
-            int rigthBlackHeight = _getBlackHeight(node->rigth);
-            if (leftBlackHeight != rigthBlackHeight) {
-                std::cout << "Black\n";
-                return false;
-            }
-            return _testRedBlack(node->left) && _testRedBlack(node->rigth);
-        }
-#endif
          Node<T>* _delete_utils(Node<T>* node) {
             Node<T>* ret;
             ret = NULL;
@@ -509,7 +306,7 @@ class RedBlackTree {
         }
 
         ~RedBlackTree() {
-            // alloc.deallocate(_end, 1);
+            alloc.deallocate(_end, 1);
             this->deleteAll();
         }
 
@@ -640,8 +437,33 @@ class RedBlackTree {
             _actualise_end();
         }
 
+
+
+
        
 #if 1
+         size_t _getBlackHeight(Node<T>*node) const {
+                if (!node || node->isNull) return 0;
+                size_t leftHeight = _getBlackHeight(node->left);
+                return leftHeight + (node->color == BLACK);
+            }
+
+        bool _testRedBlack(Node<T>*node) const {
+            if (!node || node->isNull) return true;
+            if (node->color == RED) {
+                if (node->left->color == RED || node->rigth->color == RED) {
+                    std::cout << "Red\n";
+                    return false;
+                }
+            }
+            int leftBlackHeight = _getBlackHeight(node->left);
+            int rigthBlackHeight = _getBlackHeight(node->rigth);
+            if (leftBlackHeight != rigthBlackHeight) {
+                std::cout << "Black\n";
+                return false;
+            }
+            return _testRedBlack(node->left) && _testRedBlack(node->rigth);
+        }
         bool testRedBlack() const {
             return _testRedBlack(root);
         }

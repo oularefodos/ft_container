@@ -3,6 +3,7 @@
 #include "../RedBlackTree/Red_black_tree.hpp"
 #include "../Utils/utils.hpp"
 #include "../Iterator/Iterator_traits.hpp"
+#include "../Iterator/RBT_iterator.hpp"
 
 namespace ft {
     template < class T, class Compare = std::less<T>, class Alloc = std::allocator<T> >
@@ -79,7 +80,7 @@ namespace ft {
                 _tree.insert(val);
                 n = true;
             }
-            return ft::pair<iterator, bool> (iterator(ret), n);
+            return ft::pair<iterator, bool> (iterator(ret, _tree.end()), n);
         }
 
         template <class InputIterator> 
@@ -123,38 +124,38 @@ namespace ft {
 
         // iterator 
         iterator begin() {
-            return iterator(_tree.min());
+            return _tree.getRoot() ? iterator(_tree.min(), _tree.end()) : end();
         }
 
         const_iterator begin() const {
-            return const_iterator(_tree.min());
+            return _tree.getRoot() ? const_iterator(_tree.min(), _tree.end()) : end();
         }
 
         iterator end() {
-            return iterator(_tree.max()->rigth);
+            return iterator(_tree.max()->rigth, _tree.end());
         }
 
         const_iterator end() const {
-            return const_iterator(_tree.max()->rigth);
+            return const_iterator(_tree.max()->rigth, _tree.end());
         }
 
         reverse_iterator rbegin() {
-            iterator iter(_tree.max());
+            iterator iter(_tree.max(), _tree.end());
             return reverse_iterator(iter);
         }
 
         const_reverse_iterator rbegin() const {
-            iterator iter(_tree.max());
+            iterator iter(_tree.max(), _tree.end());
             return const_reverse_iterator(iter);
         }
 
         reverse_iterator rend() {
-            iterator iter(_tree.min()->left);
+            iterator iter(_tree.min()->left, _tree.end());
             return reverse_iterator(iter);
         }
 
         const_reverse_iterator rend() const {
-            iterator iter(_tree.min()->left);
+            iterator iter(_tree.min()->left, _tree.end());
             return const_reverse_iterator(iter);
         }
 
@@ -213,7 +214,7 @@ namespace ft {
         iterator find (const key_type& k) {
             Node<value_type>* ret = _tree.search(k);
             if (ret && !ret->isNull) {
-                return iterator(ret);
+                return iterator(ret, _tree.end());
             }
             return end();
         }
@@ -221,7 +222,7 @@ namespace ft {
         const_iterator find (const key_type& k) const {
             Node<value_type>* ret = _tree.search(k);
             if (ret && !ret->isNull) {
-                return const_iterator(ret);
+                return const_iterator(ret, _tree.end());
             }
             return end();
         }
@@ -237,13 +238,14 @@ namespace ft {
         iterator lower_bound (const key_type& k) {
             Node<value_type>* ret = _tree.search(k);
             if (ret && !ret->isNull) {
-                return iterator(ret);
+                return iterator(ret, _tree.end());
             }
-            else if (ret && ret->isNull)
+            else if (ret->parrent)
             {
-                if (ret != _tree.max()->rigth)
-                    ret = ret->parrent;
-                return (++iterator(ret));
+                if (ret != ret->parrent->left)
+                    return (++iterator(ret->parrent, _tree.end()));
+                ret = ret->parrent;
+                return (iterator(ret, _tree.end()));
             }
             else
                 return end();
@@ -252,40 +254,44 @@ namespace ft {
         const_iterator lower_bound (const key_type& k) const{
             Node<value_type>* ret = _tree.search(k);
             if (ret && !ret->isNull) {
-                return const_iterator(ret);
+                return const_iterator(ret, _tree.end());
             }
-            else if (ret && ret->isNull)
+            else if (ret->parrent)
             {
-                if (ret != _tree.max()->rigth)
-                    ret = ret->parrent;
-                return (++const_iterator(ret));
+                if (ret != ret->parrent->left)
+                    return (++const_iterator(ret->parrent, _tree.end()));
+                ret = ret->parrent;
+                return (const_iterator(ret, _tree.end()));
             }
             else
                 return end();
         }
 
         iterator upper_bound (const key_type& k) {
-            Node<value_type> node = _tree.search(k);
+           Node<value_type> *node = _tree.search(k);
             if (!node->isNull)
-                return (++iterator(node));
-            else if (node->isNull) {
-                node = node->parrent;
+                return (++iterator(node, _tree.end()));
+            else if (node->parrent) {
                 if (node != node->parrent->left)
-                    return (++iterator(node));
-                return (iterator(node));
+                    return (++iterator(node->parrent, _tree.end()));
+                node = node->parrent;
+                return (iterator(node, _tree.end()));
             }
             else
                 return end();
         }
 
         const_iterator upper_bound (const key_type& k) const{
-            Node<value_type>* ret = _tree.search(k);
-            if (ret) {
-                if (ret->isNull && ret != _tree.max()->rigth)
-                    ret = ret->parrent;
-                return (++const_iterator(ret));
+            Node<value_type> *node = _tree.search(k);
+            if (!node->isNull)
+                return (++const_iterator(node, _tree.end()));
+            else if (node->parrent) {
+                if (node != node->parrent->left)
+                    return (++const_iterator(node->parrent, _tree.end()));
+                node = node->parrent;
+                return (const_iterator(node, _tree.end()));
             }
-            else 
+            else
                 return end();
         }
 
