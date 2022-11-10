@@ -15,7 +15,7 @@ namespace ft
 	template <typename T, class Alloc = std::allocator<T> >
 	class vector
 	{
-		private:
+		protected:
 			T *tab;
 			Alloc alloc;
 			size_t sz;
@@ -36,12 +36,12 @@ namespace ft
 				destroy_tab();
 				this->tab = newTab;
 			}
-		protected:
+		public:
 			typedef T value_type;
 			typedef typename std::allocator<value_type> allocator_type;
 			typedef typename allocator_type::reference reference;
-			typedef Vector_iterator<value_type> iterator;
-			typedef Vector_iterator<const value_type> const_iterator;
+			typedef ft::Vector_iterator<value_type> iterator;
+			typedef ft::Vector_iterator<const value_type> const_iterator;
 			typedef ft::reverse_iterator<iterator> reverse_iterator;
 			typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 			typedef typename allocator_type::const_reference const_reference;
@@ -52,7 +52,7 @@ namespace ft
 		public:
 
 			// CONSTRUCTOR ---------------> DONE
-			vector(const allocator_type& _alloc = allocator_type())
+			explicit vector(const allocator_type& _alloc = allocator_type())
 			{
 				alloc = _alloc;
 				this->sz = 0;
@@ -69,7 +69,7 @@ namespace ft
 					alloc.construct(&tab[i], src.tab[i]);
 			}
 
-			vector(size_type _size, const value_type& val = value_type(),
+			explicit vector(size_type _size, const value_type& val = value_type(),
 				 const allocator_type& _alloc = allocator_type())
 			{
 				alloc = _alloc;
@@ -81,8 +81,9 @@ namespace ft
 			}
 
 			template <class inputIterator>
-			vector(inputIterator& start, inputIterator const & end, \
-				const allocator_type& _alloc = allocator_type())
+			vector(inputIterator start, inputIterator end, \
+				 allocator_type _alloc = allocator_type(),
+				typename std::enable_if<!std::is_integral<inputIterator>::value, inputIterator>::type* = NULL)
 			{
 				unsigned int i;
 				alloc = _alloc;
@@ -106,7 +107,7 @@ namespace ft
 				this->cap = rhs.cap;
 				this->sz = rhs.sz;
 				this->tab = alloc.allocate(this->sz);
-				for (unsigned int i = 0; i < this->size; i++)
+				for (unsigned int i = 0; i < this->sz; i++)
 					alloc.construct(&tab[i], rhs.tab[i]);
 				return *this;
 			}
@@ -129,27 +130,6 @@ namespace ft
 				this->sz--;
 			}
 
-			template <class InputIterator>
-  			void assign (InputIterator first, InputIterator last) {
-				this->sz = last - first;
-				int i;
-				i = 0;
-				if (this->sz > this->cap)
-				{
-					T *newTab;
-					this->cap = this->sz;
-					newTab = alloc.allocate(this->cap);
-					while(first++ != last)
-						alloc.construct(&newTab[i++], *first);
-					destroy_tab();
-					this->tab = newTab;
-				}
-				else {
-					while(first++ != last)
-						tab[i++] = *first;
-				}
-			}
-
 			void assign (size_type n, const value_type& val) {
 				this->sz = n;
 				unsigned int i;
@@ -170,10 +150,35 @@ namespace ft
 				}
 			}
 
+			// template <class InputIterator>
+  			// void assign (InputIterator first, InputIterator last) {
+			// 	this->sz = last - first;
+			// 	int i;
+			// 	i = 0;
+			// 	if (this->sz > this->cap)
+			// 	{
+			// 		T *newTab;
+			// 		this->cap = this->sz;
+			// 		newTab = alloc.allocate(this->cap);
+			// 		while(first++ != last)
+			// 			alloc.construct(&newTab[i++], *first);
+			// 		destroy_tab();
+			// 		this->tab = newTab;
+			// 	}
+			// 	else {
+			// 		while(first++ != last)
+			// 			tab[i++] = *first;
+			// 	}
+			// }
+
+
+
 			iterator insert (iterator position, const value_type& val) {
 				this->sz++;
 				unsigned int y;
-				y = 0;
+				unsigned int index;
+				index = position - iterator(tab);
+				y = index;
 				if (this->sz >= this->cap)
 				{
 					this->cap ? this->cap *= 2 : this->cap = 1;
@@ -190,12 +195,11 @@ namespace ft
 					this->tab = newTab;
 				}
 				else {
-					y = position - iterator(tab);
 					for(unsigned int i = sz - 1 - 1; i != y; i--)
 						tab[i] = tab[i - 1];
 					tab[y] = val;
 				}
-				return iterator(tab);
+				return iterator(&tab[index]);
 			}
 
 			void insert (iterator position, size_type n, const value_type& val) {
@@ -273,11 +277,15 @@ namespace ft
 					alloc.destroy(&tab[i]);
 					alloc.construct(&tab[i], tab[i + 1]);
 				}
+				return (iterator(&tab[index]));
 			}
 
 			iterator erase (iterator first, iterator last) {
-				while (first != last)
-					erase(first++);
+				unsigned int i = last - first;
+				iterator n;
+				while (i--)
+					n = erase(first);
+				return n;
 			}
 
 			void swap (vector& x) {
@@ -315,7 +323,6 @@ namespace ft
 
 			void reserve(size_t len)
 			{
-				T *newTab;
 				if (this->cap < len)
 				{
 					this->cap = len;
@@ -323,7 +330,7 @@ namespace ft
 				}
 			}
 
-			void resize(size_t n, T const val)
+			void resize(size_t n, T const val = value_type())
 			{
 				if (n > this->sz)
 				{
@@ -412,11 +419,11 @@ namespace ft
 			}
 
 			reverse_iterator rbegin() {
-				return reverse_iterator(end() - 1);
+				return reverse_iterator(end());
 			}
 
 			const_reverse_iterator rbegin() const {
-				return const_reverse_iterator(end() - 1);
+				return const_reverse_iterator(end());
 			}
 
 			reverse_iterator rend() {

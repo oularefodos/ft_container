@@ -186,22 +186,22 @@ namespace ft {
 
         // access element
         mapped_type& operator[] (const key_type& k) {
-            Node<T> *ret = _tree.search(k);
+            Node<T> *ret = _tree.search(ft::make_pair(k, T()));
             if (ret && !ret->isNull) {
                 return ret->value.second;
             }
-            return 0;
+            return T();
         }
 
         mapped_type& at (const key_type& k) {
-            Node<T> *ret = _tree.search(k);
+            Node<T> *ret = _tree.search(ft::make_pair(k, T()));
             if (!ret || ret->isNull)
                 throw std::out_of_range("out of range");
             return ret->value.second;
         }
 
         const mapped_type& at (const key_type& k) const {
-            Node<T> *ret = _tree.search(k);
+            Node<T> *ret = _tree.search(ft::make_pair(k, T()));
             if (!ret || ret->isNull)
                 throw std::out_of_range("out of range");
             return ret->value.second;
@@ -214,7 +214,7 @@ namespace ft {
 
         // Operations 
         iterator find (const key_type& k) {
-            Node<value_type>* ret = _tree.search(ft::pair<key_type, T> (k, T()));
+            Node<value_type>* ret = _tree.search(ft::pair<key_type, value_type> (k, T()));
             if (ret && !ret->isNull) {
                 return iterator(ret, _tree.end());
             }

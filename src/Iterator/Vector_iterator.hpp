@@ -3,6 +3,7 @@
 #include "Iterator_node.hpp"
 #include "Iterator_traits.hpp"
 
+namespace ft {
 template <class T>
 class Vector_iterator : public iterator<ft::random_access_iterator_tag, T>
 {
@@ -19,15 +20,12 @@ class Vector_iterator : public iterator<ft::random_access_iterator_tag, T>
     public:
         // constructor 
 
-        Vector_iterator() : ptr(0) {}
-        Vector_iterator(T * x)
+        Vector_iterator() : ptr(nullptr) {}
+        Vector_iterator(T * x) : ptr(x)
         {
-            ptr = x;
         }
 
-        Vector_iterator(Vector_iterator const& rhs)
-        {
-            ptr = rhs.ptr;
+        Vector_iterator(Vector_iterator const& rhs) : ptr(rhs.ptr) {
         }
 
         // affectation
@@ -64,7 +62,7 @@ class Vector_iterator : public iterator<ft::random_access_iterator_tag, T>
             return ++ptr, *this;
         }
 
-        Vector_iterator& operator++(int)
+        Vector_iterator operator++(int)
         {
             Vector_iterator tmp(*this);
             ++ptr;
@@ -76,7 +74,7 @@ class Vector_iterator : public iterator<ft::random_access_iterator_tag, T>
             return --ptr, *this;
         }
 
-        Vector_iterator& operator--(int)
+        Vector_iterator operator--(int)
         {
             Vector_iterator temp(*this);
             --ptr;
@@ -91,7 +89,7 @@ class Vector_iterator : public iterator<ft::random_access_iterator_tag, T>
             return *this;
         }
 
-        Vector_iterator& operator+(difference_type const& rhs)
+        Vector_iterator operator+(difference_type const& rhs)
         {
             return Vector_iterator(ptr + rhs);
         }
@@ -107,7 +105,7 @@ class Vector_iterator : public iterator<ft::random_access_iterator_tag, T>
             return *this;
         }
 
-        Vector_iterator& operator-(difference_type rhs) const
+        Vector_iterator operator-(difference_type rhs) const
         {
             return Vector_iterator(ptr - rhs);
         }
@@ -142,6 +140,7 @@ class Vector_iterator : public iterator<ft::random_access_iterator_tag, T>
         bool operator>(const Vector_iterator rhs) const {
             return ptr > rhs.ptr;
         }
+};
 };
 
 #endif

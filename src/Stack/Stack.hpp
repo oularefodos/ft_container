@@ -8,7 +8,7 @@ namespace ft {
     template <class T, class Container = ft::vector<T> >
     class stack
     {
-        private:
+        protected:
             Container container;
         public:
             typedef T           value_type;
