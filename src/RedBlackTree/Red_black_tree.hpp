@@ -282,8 +282,8 @@ class RedBlackTree {
 
         RedBlackTree(RedBlackTree const& rhs) {
             _end = alloc.allocate(1);
-            RedBlackTree_iterator<T> first(rhs.min());
-            RedBlackTree_iterator<T> last(rhs.max()->rigth);
+            RedBlackTree_iterator<T> first(rhs.begin());
+            RedBlackTree_iterator<T> last(rhs.end());
             while(first != last) {
                 insert(*first);
                 first++;
@@ -310,11 +310,11 @@ class RedBlackTree {
             this->deleteAll();
         }
 
-        size_t size() {
+        size_t size() const {
             return this->sz;
         }
 
-        Node<T>* getRoot() {
+        Node<T>* getRoot() const {
             return root;
         }
 
@@ -388,7 +388,7 @@ class RedBlackTree {
             }
         }
 
-        Node<T>* min() {
+        Node<T>* min() const {
             Node<T>* temp;
             temp = root;
             while (!temp->left->isNull)
@@ -396,11 +396,11 @@ class RedBlackTree {
             return (temp);
         }
 
-        std::allocator<Node<T> > getAllocator() {
+        std::allocator<Node<T> > getAllocator() const {
             return alloc;
         }
 
-        Node<T>* max() {
+        Node<T>* max() const {
             Node<T>* temp;
             temp = root;
             while (!temp->rigth->isNull)
@@ -408,7 +408,7 @@ class RedBlackTree {
             return (temp);
         }
 
-        Node<T>* end() {
+        Node<T>* end() const {
             return _end;
         }
 

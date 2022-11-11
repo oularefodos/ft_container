@@ -7,7 +7,7 @@
 
 
 namespace ft {
-    template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key,T> > > 
+    template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<Key,T> > > 
     class map
     {
         protected:
@@ -23,6 +23,7 @@ namespace ft {
                     }
             };
             Comp _comp;
+            Alloc _alloc;
             RedBlackTree<ft::pair<const Key,T>, Comp> _tree;
         public:
             typedef Key key_type;
@@ -36,42 +37,55 @@ namespace ft {
             typedef typename allocator_type::pointer pointer;
             typedef typename allocator_type::const_pointer const_pointer;
             typedef RedBlackTree_iterator<value_type> iterator;
-            typedef RedBlackTree_iterator<const value_type> const_iterator;
+            typedef const RedBlackTree_iterator<value_type> const_iterator;
             typedef Revers_Rbt_iterator<const value_type> const_reverse_iterator;
             typedef Revers_Rbt_iterator<value_type> reverse_iterator;
             // typedef typename iterator_traits<iterator>::difference_type difference_type;
         public:
         // constructor
-            map() {
-                this->_comp = Comp();
+            explicit map (const key_compare& comp = key_compare(), 
+            const allocator_type& alloc = allocator_type()) {
+                _alloc = alloc;
+                _comp = comp;
             }
-            map(iterator first, iterator last) {
+
+            template <class InputIterator>  
+            map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
+            const allocator_type& alloc = allocator_type())
+            {
                 this->_comp = Comp();
                 while (first != last) {
                     _tree.insert(*first);
                     first++;
                 }
+                _alloc = alloc;
+                _comp = comp;
             }
-            map(const map& lhs) : _tree(lhs._tree) {
+
+            map(map const& lhs) {
+                for(iterator i = lhs.begin(); i != lhs.end(); i++)
+                    insert(*i);
                 this->_comp = lhs._comp;
-                this->Comp = lhs.Comp;
+                this->_alloc = lhs._alloc;
             }
             ~map() {}
 
             map& operator= (const map& x) {
-                this->_tree = x._tree;
+                _tree.deleteAll();
+                for(iterator i = x.begin(); i != x.end(); i++)
+                    insert(*i);
                 this->_comp = x._comp;
                 this->Comp = x.Comp;
             }
 
         // to delete
-        void print() {
-            _tree.printTree();
-        }
+        // void print() {
+        //     _tree.printTree();
+        // }
 
-        bool test() {
-            return _tree.testRedBlack();
-        }
+        // bool test() {
+        //     return _tree.testRedBlack();
+        // }
 
 
         // Modifiers
@@ -134,11 +148,13 @@ namespace ft {
         }
 
         iterator end() {
-            return iterator(_tree.max()->rigth, _tree.end());
+            iterator v = _tree.getRoot() ? iterator(_tree.max()->rigth, _tree.end()) : iterator(NULL, _tree.end());
+            return v;
         }
 
         const_iterator end() const {
-            return const_iterator(_tree.max()->rigth, _tree.end());
+            iterator v = _tree.getRoot() ? const_iterator(_tree.max()->rigth, _tree.end()) : const_iterator(NULL, _tree.end());
+            return v;
         }
 
         reverse_iterator rbegin() {
@@ -176,25 +192,24 @@ namespace ft {
             return _tree.size() == 0;
         }
 
-        size_t size() {
+        size_t size() const {
             return _tree.size();
         }
 
-        size_t max_size() {
-            return _tree.getAllocator().max_size();
+        size_t max_size() const {
+            return _alloc.max_size();
         }
 
         // access element
         mapped_type& operator[] (const key_type& k) {
-            Node<T> *ret = _tree.search(ft::make_pair(k, T()));
-            if (ret && !ret->isNull) {
-                return ret->value.second;
-            }
-            return T();
+            Node<value_type> *ret = _tree.search(ft::make_pair(k, T()));
+            if (!ret)
+                ret = _tree.end();
+            return ret->value.second;
         }
 
         mapped_type& at (const key_type& k) {
-            Node<T> *ret = _tree.search(ft::make_pair(k, T()));
+            Node<value_type> *ret = _tree.search(ft::make_pair(k, T()));
             if (!ret || ret->isNull)
                 throw std::out_of_range("out of range");
             return ret->value.second;
