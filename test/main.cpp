@@ -3,5 +3,6 @@
 #include <vector>
 
 int main() {
-	vector_test();
+	// vector_test();
+	map_test();
 };

@@ -11,3 +11,5 @@
 #include <ctime>
 
 void vector_test();
+void map_test();
+void message(std::string m, int i);
