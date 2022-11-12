@@ -75,7 +75,8 @@ namespace ft {
                 for(iterator i = x.begin(); i != x.end(); i++)
                     insert(*i);
                 this->_comp = x._comp;
-                this->Comp = x.Comp;
+                this->_alloc = x._alloc;
+                return *this; 
             }
 
         // to delete
@@ -100,7 +101,8 @@ namespace ft {
         }
 
         template <class InputIterator> 
-        void insert (InputIterator first, InputIterator last) {
+        void insert (InputIterator first, InputIterator last,
+        typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = NULL) {
             while (first != last) {
                 _tree.insert(*first);
                 first++;
@@ -108,7 +110,8 @@ namespace ft {
         }
 
         void erase (iterator position) {
-            _tree.deleteNode(*(position).first);
+            key_type  i = (*position).first;
+            erase(i);
         }
 
         size_t erase (const key_type& k) {
@@ -126,6 +129,8 @@ namespace ft {
         iterator insert (iterator position, const value_type& val) {
             (void)position;
             _tree.insert(val);
+            Node<value_type>* ret = _tree.search(val);
+            return (iterator(ret, _tree.end()));
         } 
 
         void clear() {
@@ -133,7 +138,7 @@ namespace ft {
         }
 
         void swap (map& x) {
-            map temp = x;
+            map temp = *this;
             *this = x;
             x = temp;
         }
@@ -229,15 +234,16 @@ namespace ft {
 
         // Operations 
         iterator find (const key_type& k) {
-            Node<value_type>* ret = _tree.search(ft::pair<key_type, value_type> (k, T()));
+            Node<value_type>* ret = _tree.search(ft::make_pair(k, T()));
             if (ret && !ret->isNull) {
+                std::cout << "oooo" << std::endl;
                 return iterator(ret, _tree.end());
             }
             return end();
         }
         
         const_iterator find (const key_type& k) const {
-            Node<value_type>* ret = _tree.search(ft::pair<key_type, T> (k, T()));
+            Node<value_type>* ret = _tree.search(ft::make_pair(k, T()));
             if (ret && !ret->isNull) {
                 return const_iterator(ret, _tree.end());
             }
@@ -245,7 +251,7 @@ namespace ft {
         }
 
         size_t count (const key_type& k) const {
-            Node<value_type>* ret = _tree.search(ft::pair<key_type, T> (k, T()));
+            Node<value_type>* ret = _tree.search(ft::make_pair(k, T()));
             if (ret && !ret->isNull) {
                 return 1;
             }

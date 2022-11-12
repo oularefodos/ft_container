@@ -45,6 +45,7 @@ void map_test() {
         a1.insert(ft::make_pair(i, x));
     }
 
+
     std::map<int,int> b(a);
     ft::map<int,int> b1(a1);
     compare_map(a, a1, "Copie Constructor");
@@ -70,10 +71,81 @@ void map_test() {
 
     //insert
 
-    for (unsigned int i = 20; i < 10; i++) {
+    for (unsigned int i = 10; i < 20; i++) {
         x = rand() % 800;
         a.insert(std::make_pair(i, x));
         a1.insert(ft::make_pair(i, x));
     }
     compare_map(a, a1, "insert 1");
+
+    for (unsigned int i = 20; i < 30; i++) {
+        x = rand() % 800;
+        a.insert(++a.begin(), std::make_pair(i, x));
+        a1.insert(++a1.begin(), ft::make_pair(i, x));
+    }
+    compare_map(a, a1, "insert 2");
+
+    std::map<int, int> w;
+    ft::map<int, int> y;
+    for (unsigned int i = 30; i < 40; i++) {
+        x = rand() % 800;
+        w.insert(std::make_pair(i, x));
+        y.insert(ft::make_pair(i, x));
+    }
+
+    a.insert(w.begin(), w.end());
+    a1.insert(y.begin(), y.end());
+    compare_map(a, a1, "insert 3");
+
+    // Erase
+    
+    for (unsigned int i = 10; i < 10; i++) {
+        a.erase(i);
+        a1.erase(i);
+    }
+    compare_map(a, a1, "erase 1");
+
+    std::map<int, int>::iterator iter1(a.begin());
+    ft::map<int, int>::iterator iter2(a1.begin());
+    for (unsigned int i = 10; i < 10; i++) {
+        ++iter1;
+        ++iter2;
+    }
+
+    a.erase(a.begin(), iter1);
+    a1.erase(a1.begin(), iter2);
+    compare_map(a, a1, "erase 2");
+
+    for (unsigned int i = 10; i < 10; i++) {
+        a.erase(++a.begin());
+        a1.erase(++a1.begin());
+    }
+    compare_map(a, a1, "erase 3");
+
+    a.swap(w);
+    a1.swap(y);
+
+    compare_map(a, a1, "swap");
+
+    a.clear();
+    a1.clear();
+    compare_map(a, a1, "clear");
+
+    a = w;
+    a1 = y;
+
+    iter1 = a.find(35);
+    iter2 = a1.find(35);
+    if (((*iter1).first == (*iter2).first))
+        message("find", 0);
+    else
+        message("find", 1);
+    
+    int ret1 = a.count(find);
+    int ret2 = a1.count(find);
+
+     if ((ret1 == ret2))
+        message("count", 0);
+    else
+        message("count", 1);
 }

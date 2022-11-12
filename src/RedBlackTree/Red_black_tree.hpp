@@ -322,6 +322,7 @@ class RedBlackTree {
             while (this->getRoot()) {
                 this->deleteNode(this->getRoot()->value);
             }
+            root = NULL;
             this->sz = 0;
         }
 
@@ -346,7 +347,7 @@ class RedBlackTree {
             int i = 0;
             if (!root)
             {
-                this->sz++;
+                this->sz = 1;
                 this->root = this->alloc.allocate(1);
                 this->_init(NULL, this->root, BLACK, value);
             }

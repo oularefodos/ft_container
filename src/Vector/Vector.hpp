@@ -9,6 +9,7 @@
 #include "../Iterator/Vector_iterator.hpp"
 #include "../Iterator/reverse_iterator.hpp"
 #include "../Algorithme/algorithme.hpp"
+#include "../Utils/utils.hpp"
 
 namespace ft
 {
@@ -83,7 +84,7 @@ namespace ft
 			template <class inputIterator>
 			vector(inputIterator start, inputIterator end, \
 				 allocator_type _alloc = allocator_type(),
-				typename std::enable_if<!std::is_integral<inputIterator>::value, inputIterator>::type* = NULL)
+				typename ft::enable_if<!std::is_integral<inputIterator>::value, inputIterator>::type* = NULL)
 			{
 				unsigned int i;
 				alloc = _alloc;
@@ -150,26 +151,27 @@ namespace ft
 				}
 			}
 
-			// template <class InputIterator>
-  			// void assign (InputIterator first, InputIterator last) {
-			// 	this->sz = last - first;
-			// 	int i;
-			// 	i = 0;
-			// 	if (this->sz > this->cap)
-			// 	{
-			// 		T *newTab;
-			// 		this->cap = this->sz;
-			// 		newTab = alloc.allocate(this->cap);
-			// 		while(first++ != last)
-			// 			alloc.construct(&newTab[i++], *first);
-			// 		destroy_tab();
-			// 		this->tab = newTab;
-			// 	}
-			// 	else {
-			// 		while(first++ != last)
-			// 			tab[i++] = *first;
-			// 	}
-			// }
+			template <class InputIterator>
+  			void assign (InputIterator first, InputIterator last,
+				typename ft::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = NULL) {
+				this->sz = last - first;
+				int i;
+				i = 0;
+				if (this->sz > this->cap)
+				{
+					T *newTab;
+					this->cap = this->sz;
+					newTab = alloc.allocate(this->cap);
+					while(first++ != last)
+						alloc.construct(&newTab[i++], *first);
+					destroy_tab();
+					this->tab = newTab;
+				}
+				else {
+					while(first++ != last)
+						tab[i++] = *first;
+				}
+			}
 
 
 

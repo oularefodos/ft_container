@@ -28,9 +28,9 @@ bool compare(std::vector<int> a, ft::vector<int> b, int x) {
 
 void message(std::string m, int i) {
     if (i)
-        std::cout << m << " : KO \033[1;31m" << std::endl;
+        std::cout << "\033[1;31m " << m << " : KO" << std::endl;
     else
-        std::cout << m << " : OK \033[0;32m" << std::endl;
+        std::cout << "\033[1;32m " << m << " : OK" << std::endl;
 }
 
 
