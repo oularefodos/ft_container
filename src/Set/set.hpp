@@ -40,7 +40,8 @@ namespace ft {
             typedef const RedBlackTree_iterator<value_type> const_iterator;
             typedef const Revers_Rbt_iterator<value_type> const_reverse_iterator;
             typedef Revers_Rbt_iterator<value_type> reverse_iterator;
-            // typedef typename iterator_traits<iterator>::difference_type difference_type;
+            typedef ptrdiff_t difference_type;
+            typedef size_t size_type;
         public:
         // constructor
             explicit set (const key_compare& comp = key_compare(), 
@@ -78,15 +79,6 @@ namespace ft {
                 this->_alloc = x._alloc;
                 return *this; 
             }
-
-        // to delete
-        // void print() {
-        //     _tree.printTree();
-        // }
-
-        // bool test() {
-        //     return _tree.testRedBlack();
-        // }
 
 
         // Modifiers

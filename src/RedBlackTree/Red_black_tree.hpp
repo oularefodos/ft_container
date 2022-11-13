@@ -438,56 +438,52 @@ class RedBlackTree {
             _actualise_end();
         }
 
-
-
-
-       
-#if 1
-         size_t _getBlackHeight(Node<T>*node) const {
-                if (!node || node->isNull) return 0;
-                size_t leftHeight = _getBlackHeight(node->left);
-                return leftHeight + (node->color == BLACK);
-            }
-
-        bool _testRedBlack(Node<T>*node) const {
-            if (!node || node->isNull) return true;
-            if (node->color == RED) {
-                if (node->left->color == RED || node->rigth->color == RED) {
-                    std::cout << "Red\n";
-                    return false;
-                }
-            }
-            int leftBlackHeight = _getBlackHeight(node->left);
-            int rigthBlackHeight = _getBlackHeight(node->rigth);
-            if (leftBlackHeight != rigthBlackHeight) {
-                std::cout << "Black\n";
-                return false;
-            }
-            return _testRedBlack(node->left) && _testRedBlack(node->rigth);
-        }
-        bool testRedBlack() const {
-            return _testRedBlack(root);
-        }
-
-        void _printTree(const std::string &prefix, Node<T> *node, bool is_rigth) const {
-                if (!node || node->isNull) return;
-                std::cout << prefix;
-                if (node->parrent)
-                    std::cout << (is_rigth ? "├─ r:" : "└─ l:" );
-                else
-                    std::cout << "root:";
-
-                std::cout << (node->color == RED ? "\033[0;31m" : "\033[0m") << node->value.first << "\033[0m" << std::endl; 
-                _printTree( prefix + (is_rigth ? "│  " : "   "), node->rigth, true);
-                _printTree( prefix + (is_rigth ? "│  " : "   "), node->left, false);
-            }
-        void printTree() const {
-            _printTree("", root, false);
-        }
-
-        void print() {
-            iterator it(min());
-        }
-#endif
         };
 #endif
+
+
+//          size_t _getBlackHeight(Node<T>*node) const {
+//                 if (!node || node->isNull) return 0;
+//                 size_t leftHeight = _getBlackHeight(node->left);
+//                 return leftHeight + (node->color == BLACK);
+//             }
+
+//         bool _testRedBlack(Node<T>*node) const {
+//             if (!node || node->isNull) return true;
+//             if (node->color == RED) {
+//                 if (node->left->color == RED || node->rigth->color == RED) {
+//                     std::cout << "Red\n";
+//                     return false;
+//                 }
+//             }
+//             int leftBlackHeight = _getBlackHeight(node->left);
+//             int rigthBlackHeight = _getBlackHeight(node->rigth);
+//             if (leftBlackHeight != rigthBlackHeight) {
+//                 std::cout << "Black\n";
+//                 return false;
+//             }
+//             return _testRedBlack(node->left) && _testRedBlack(node->rigth);
+//         }
+//         bool testRedBlack() const {
+//             return _testRedBlack(root);
+//         }
+
+//         void _printTree(const std::string &prefix, Node<T> *node, bool is_rigth) const {
+//                 if (!node || node->isNull) return;
+//                 std::cout << prefix;
+//                 if (node->parrent)
+//                     std::cout << (is_rigth ? "├─ r:" : "└─ l:" );
+//                 else
+//                     std::cout << "root:";
+
+//                 std::cout << (node->color == RED ? "\033[0;31m" : "\033[0m") << node->value.first << "\033[0m" << std::endl; 
+//                 _printTree( prefix + (is_rigth ? "│  " : "   "), node->rigth, true);
+//                 _printTree( prefix + (is_rigth ? "│  " : "   "), node->left, false);
+//             }
+//         void printTree() const {
+//             _printTree("", root, false);
+//         }
+
+//         void print() {
+//             iterator it(min());
+//         }
