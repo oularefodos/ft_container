@@ -18,7 +18,7 @@ namespace ft {
                     Comp(Compare _com = Compare()) {
                         _comp = _com;
                     };
-                    bool operator()( const ft::pair<const Key,T>& lhs, const ft::pair<const Key,T>& rhs ) const{
+                    bool operator()( const ft::pair<Key,T>& lhs, const ft::pair<Key,T>& rhs ) const{
                         return _comp(lhs.first, rhs.first);
                     }
             };
@@ -38,7 +38,7 @@ namespace ft {
             typedef typename allocator_type::const_pointer const_pointer;
             typedef RedBlackTree_iterator<value_type> iterator;
             typedef const RedBlackTree_iterator<value_type> const_iterator;
-            typedef Revers_Rbt_iterator<const value_type> const_reverse_iterator;
+            typedef const Revers_Rbt_iterator<value_type> const_reverse_iterator;
             typedef Revers_Rbt_iterator<value_type> reverse_iterator;
             // typedef typename iterator_traits<iterator>::difference_type difference_type;
         public:
@@ -70,7 +70,7 @@ namespace ft {
             }
             ~map() {}
 
-            map& operator= (const map& x) {
+            map& operator= (map& x) {
                 _tree.deleteAll();
                 for(iterator i = x.begin(); i != x.end(); i++)
                     insert(*i);
@@ -236,7 +236,6 @@ namespace ft {
         iterator find (const key_type& k) {
             Node<value_type>* ret = _tree.search(ft::make_pair(k, T()));
             if (ret && !ret->isNull) {
-                std::cout << "oooo" << std::endl;
                 return iterator(ret, _tree.end());
             }
             return end();
@@ -250,12 +249,8 @@ namespace ft {
             return end();
         }
 
-        size_t count (const key_type& k) const {
-            Node<value_type>* ret = _tree.search(ft::make_pair(k, T()));
-            if (ret && !ret->isNull) {
-                return 1;
-            }
-            return 0;
+        size_t count (const key_type& k) {
+            return find(k) != end() ? 1 : 0;
         }
 
         iterator lower_bound (const key_type& k) {

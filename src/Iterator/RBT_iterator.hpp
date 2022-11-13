@@ -127,11 +127,11 @@ class RedBlackTree_iterator {
             return temp;
         }
 
-        bool operator==(RedBlackTree_iterator const& rhs) {
+        bool operator== (RedBlackTree_iterator const& rhs) const{
             return node == rhs.node;
         }
 
-        bool operator!= (RedBlackTree_iterator const& rhs) {
+        bool operator!= (RedBlackTree_iterator const& rhs) const {
             return node != rhs.node;
         }
 

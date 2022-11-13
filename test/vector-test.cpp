@@ -65,6 +65,7 @@ void vector_test() {
     /* Modifiers test */
 
     // push_back 
+    std::cout << "fode" << std::endl;
     for (int i = 0; i < 10; i++) {
         first.push_back(i);
         my_first.push_back(i);
@@ -73,7 +74,7 @@ void vector_test() {
         message("push_back", 0);
     else
         message("push_back", 1);
-    
+    std::cout << "end" << std::endl;
     // pop_back
     for (int i = 0; i < 10; i++) {
         first.pop_back();
@@ -222,6 +223,5 @@ void vector_test() {
     if (first.back() != my_first.back())
         message("Back", 1); 
     else
-        message("Back", 0);   
-
+        message("Back", 0);
 }

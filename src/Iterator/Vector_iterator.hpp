@@ -94,11 +94,6 @@ class Vector_iterator : public iterator<ft::random_access_iterator_tag, T>
             return Vector_iterator(ptr + rhs);
         }
 
-        // Vector_iterator& operator+(difference_type rhs, const Vector_iterator& lhs)
-        // {
-        //     return Vector_iterator(rhs + lhs.ptr);
-        // }
-
         Vector_iterator& operator-=(const int& rhs)
         {
             ptr = ptr - rhs;

@@ -1,5 +1,6 @@
 #include "index.hpp"
-
+typedef std::map<int, int>::iterator type_iter1;
+typedef ft::map<int, int>::iterator type_iter2;
 
 // const iterator
 
@@ -9,11 +10,6 @@ bool compare_map(std::map<int, int>& a, ft::map<int, int>& b, std::string str) {
         message(str, 1);
         return false;
     }
-    // if (a.max_size() != b.max_size()) {
-    //     std::cout << " max_size ";
-    //     message(str, 1);
-    //     return false;
-    // }
         std::map<int, int>::iterator x = a.begin();
         for(ft::map<int, int>::iterator i = b.begin(); i != b.end(); i++) {
             if ((*i).first != (*x).first ){
@@ -141,11 +137,43 @@ void map_test() {
     else
         message("find", 1);
     
-    int ret1 = a.count(find);
-    int ret2 = a1.count(find);
+    int ret1 = a.count(35);
+    int ret2 = a1.count(35);
 
-     if ((ret1 == ret2))
+     if (ret1 == ret2)
         message("count", 0);
     else
         message("count", 1);
+    
+    // Lower_bound
+
+    for(unsigned int i  = 0; i < 40; i++) {
+        iter1 = a.lower_bound(i);
+        iter2 = a1.lower_bound(i);
+        if ((*iter1).first == (*iter2).first)
+            message("Lower bound", 0);
+        else
+            message("Lower Bound", 1);
+    }
+
+    // upper_bound
+    for(unsigned int i  = 0; i < 39; i++) {
+        iter1 = a.upper_bound(i);
+        iter2 = a1.upper_bound(i);
+        if ((*iter1).first == (*iter2).first)
+            message("Upper Bound", 0);
+        else
+            message("Upper Bound", 1);
+    }
+
+    // equal Range
+    for(unsigned int i  = 0; i < 39; i++) {
+         std::pair<type_iter1, type_iter1> pair_ret1 = a.equal_range(i);
+         ft::pair<type_iter2, type_iter2> pair_ret2 = a1.equal_range(i);
+        if ((*(pair_ret1.first)).first == (*(pair_ret2.first)).first &&
+        (*(pair_ret1.second)).first == (*(pair_ret2.second)).first)
+            message("equal_rqange", 0);
+        else
+            message("equal_range", 1);
+    }
 }

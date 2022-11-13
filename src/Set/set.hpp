@@ -5,8 +5,9 @@
 #include "../Iterator/Iterator_traits.hpp"
 #include "../Iterator/RBT_iterator.hpp"
 
+
 namespace ft {
-    template < class T, class Compare = std::less<T>, class Alloc = std::allocator<T> >
+    template <class T, class Compare = std::less<T>, class Alloc = std::allocator<T> > 
     class set
     {
         protected:
@@ -22,54 +23,70 @@ namespace ft {
                     }
             };
             Comp _comp;
+            Alloc _alloc;
             RedBlackTree<T, Comp> _tree;
         public:
-            typedef T key_type;
+            typedef T mapped_type;
             typedef Compare key_compare;
             typedef Comp value_compare;
             typedef T value_type;
+            typedef T key_type;
             typedef Alloc allocator_type;
             typedef typename allocator_type::reference reference;
             typedef typename allocator_type::const_reference const_reference;
             typedef typename allocator_type::pointer pointer;
             typedef typename allocator_type::const_pointer const_pointer;
             typedef RedBlackTree_iterator<value_type> iterator;
-            typedef RedBlackTree_iterator<const value_type> const_iterator;
-            typedef Revers_Rbt_iterator<const value_type> const_reverse_iterator;
+            typedef const RedBlackTree_iterator<value_type> const_iterator;
+            typedef const Revers_Rbt_iterator<value_type> const_reverse_iterator;
             typedef Revers_Rbt_iterator<value_type> reverse_iterator;
             // typedef typename iterator_traits<iterator>::difference_type difference_type;
         public:
         // constructor
-            set() {
-                this->_comp = Comp();
+            explicit set (const key_compare& comp = key_compare(), 
+            const allocator_type& alloc = allocator_type()) {
+                _alloc = alloc;
+                _comp = comp;
             }
-            set(iterator first, iterator last) {
+
+            template <class InputIterator>  
+            set (InputIterator first, InputIterator last, const key_compare& comp = key_compare(),
+            const allocator_type& alloc = allocator_type())
+            {
                 this->_comp = Comp();
                 while (first != last) {
                     _tree.insert(*first);
                     first++;
                 }
+                _alloc = alloc;
+                _comp = comp;
             }
-            set(const set& lhs) : _tree(lhs._tree) {
+
+            set(set const& lhs) {
+                for(iterator i = lhs.begin(); i != lhs.end(); i++)
+                    insert(*i);
                 this->_comp = lhs._comp;
-                this->Comp = lhs.Comp;
+                this->_alloc = lhs._alloc;
             }
             ~set() {}
 
-            set& operator= (const set& x) {
-                this->_tree = x._tree;
+            set& operator= (set& x) {
+                _tree.deleteAll();
+                for(iterator i = x.begin(); i != x.end(); i++)
+                    insert(*i);
                 this->_comp = x._comp;
-                this->Comp = x.Comp;
+                this->_alloc = x._alloc;
+                return *this; 
             }
 
         // to delete
-        void print() {
-            _tree.printTree();
-        }
+        // void print() {
+        //     _tree.printTree();
+        // }
 
-        bool test() {
-            return _tree.testRedBlack();
-        }
+        // bool test() {
+        //     return _tree.testRedBlack();
+        // }
 
 
         // Modifiers
@@ -84,7 +101,8 @@ namespace ft {
         }
 
         template <class InputIterator> 
-        void insert (InputIterator first, InputIterator last) {
+        void insert (InputIterator first, InputIterator last,
+        typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = NULL) {
             while (first != last) {
                 _tree.insert(*first);
                 first++;
@@ -92,7 +110,8 @@ namespace ft {
         }
 
         void erase (iterator position) {
-            _tree.deleteNode(*(position).first);
+            key_type  i = *position;
+            erase(i);
         }
 
         size_t erase (const key_type& k) {
@@ -110,6 +129,8 @@ namespace ft {
         iterator insert (iterator position, const value_type& val) {
             (void)position;
             _tree.insert(val);
+            Node<value_type>* ret = _tree.search(val);
+            return (iterator(ret, _tree.end()));
         } 
 
         void clear() {
@@ -117,7 +138,7 @@ namespace ft {
         }
 
         void swap (set& x) {
-            set temp = x;
+            set temp = *this;
             *this = x;
             x = temp;
         }
@@ -132,11 +153,13 @@ namespace ft {
         }
 
         iterator end() {
-            return iterator(_tree.max()->rigth, _tree.end());
+            iterator v = _tree.getRoot() ? iterator(_tree.max()->rigth, _tree.end()) : iterator(NULL, _tree.end());
+            return v;
         }
 
         const_iterator end() const {
-            return const_iterator(_tree.max()->rigth, _tree.end());
+            iterator v = _tree.getRoot() ? const_iterator(_tree.max()->rigth, _tree.end()) : const_iterator(NULL, _tree.end());
+            return v;
         }
 
         reverse_iterator rbegin() {
@@ -174,35 +197,12 @@ namespace ft {
             return _tree.size() == 0;
         }
 
-        size_t size() {
+        size_t size() const {
             return _tree.size();
         }
 
-        size_t max_size() {
-            return _tree.getAllocator().max_size();
-        }
-
-        // access element
-        value_type& operator[] (const key_type& k) {
-            Node<T> *ret = _tree.search(k);
-            if (ret && !ret->isNull) {
-                return ret->value.second;
-            }
-            return 0;
-        }
-
-        value_type& at (const key_type& k) {
-            Node<T> *ret = _tree.search(k);
-            if (!ret || ret->isNull)
-                throw std::out_of_range("out of range");
-            return ret->value.second;
-        }
-
-        const value_type& at (const key_type& k) const {
-            Node<T> *ret = _tree.search(k);
-            if (!ret || ret->isNull)
-                throw std::out_of_range("out of range");
-            return ret->value.second;
+        size_t max_size() const {
+            return _alloc.max_size();
         }
 
         // allocator 
@@ -227,12 +227,8 @@ namespace ft {
             return end();
         }
 
-        size_t count (const key_type& k) const {
-            Node<value_type>* ret = _tree.search(k);
-            if (ret && !ret->isNull) {
-                return 1;
-            }
-            return 0;
+        size_t count (const key_type& k) {
+            return find(k) != end() ? 1 : 0;
         }
 
         iterator lower_bound (const key_type& k) {

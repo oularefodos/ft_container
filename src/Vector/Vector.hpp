@@ -32,9 +32,11 @@ namespace ft
 			{
 				T *newTab;
 				newTab = alloc.allocate(_size);
-				for (unsigned int i(0); i < this->sz; i++)
-					alloc.construct(&newTab[i], tab[i]);
-				destroy_tab();
+				if (this->cap != 1) {
+					for (unsigned int i(0); i < this->sz; i++)
+						alloc.construct(&newTab[i], tab[i]);
+					destroy_tab();
+				}
 				this->tab = newTab;
 			}
 		public:
